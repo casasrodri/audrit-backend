@@ -16,7 +16,6 @@ class JWT:
 
 class DataBase:
     URL_TEST = os.environ.get("DATABASE_URL_TEST")
-    URL_PROD_OTRO = os.environ.get("DATABASE_URL_PROD_OTRO")
     POSTGRES_STRING_CONNECTION = os.environ.get("POSTGRES_STRING_CONNECTION")
 
 
