@@ -12,6 +12,7 @@ h11==0.14.0
 httptools==0.6.1
 idna==3.6
 loguru==0.7.2
+psycopg2==2.9.9
 pyasn1==0.5.1
 pycparser==2.21
 pydantic==2.5.3

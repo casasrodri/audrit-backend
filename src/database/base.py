@@ -8,12 +8,24 @@ from config.env import Environment, DataBase
 from utils.logger import logger
 
 engine: Engine = None
+motor: str = None
 
 if Environment.MODE == "dev":
+    motor = "SQLite"
     engine = create_engine(DataBase.URL_TEST, connect_args={"check_same_thread": False})
 
 elif Environment.MODE == "production":
+    motor = "PostgreSQL"
     engine = create_engine(DataBase.POSTGRES_STRING_CONNECTION)
+
+else:
+    raise ValueError("Ambiente no reconocido. Debe ser 'dev' o 'production'.")
+
+
+def init_db():
+    BaseSchema.metadata.create_all(bind=engine)
+    logger.info(f"Base de datos inicializada: {motor}")
+
 
 SessionLocal: sessionmaker = sessionmaker(
     autocommit=False, autoflush=False, bind=engine
@@ -22,11 +34,6 @@ SessionLocal: sessionmaker = sessionmaker(
 
 BaseSchema = declarative_base()
 "Base para heredar a las clases que representen tablas en la base de datos."
-
-
-def init_db():
-    BaseSchema.metadata.create_all(bind=engine)
-    logger.info("Base de datos inicializada.")
 
 
 # Dependency
