@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-ORIGINS = ["http://localhost:5173"]
+ORIGINS = [
+    "http://localhost:5173",  # Vue.js
+    "http://localhost:4321",  # Astro.js
+    "http://localhost:3000",  # Nuxt.js
+]
 
 
 def cors_midd(app: FastAPI) -> None:

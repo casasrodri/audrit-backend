@@ -42,11 +42,23 @@ async def login(credenciales: UsuarioLogin, response: Response):
 
     # 3. Guardo el token de acceso en una cookie
     response.set_cookie(key="jwt", value=access_token, **COOKIES_KWARGS)
-    response.set_cookie(key="nombre", value="Rodro", **COOKIES_KWARGS)
+    # response.set_cookie(key="nombre", value="Rodriii 2.1", **COOKIES_KWARGS)
+    response.set_cookie(
+        key="nombre",
+        value="Rodri",
+        secure=True,
+        httponly=False,
+        samesite="None",
+        expires=JWT_EXPIRE_MINUTES * 60,
+    )
     # TODO Agregar acá demás datos que le sirvan al front, como los menús que podrá ver
 
     # 4. Devuelvo el resultado del login
-    return {"status": "ok", "description": "Login correcto.", "jwt": access_token}
+    return {
+        "status": "ok",
+        "description": "Login correcto.",
+        "jwt": access_token,
+    }
 
 
 # http://localhost:8000/jwt_debug?email=rodri&password=rodri
@@ -58,7 +70,7 @@ async def login_con_query_params(email: str, password: str, response: Response):
         email = "rodri@casas.com"
 
     if password == "rodri":
-        password = "adrianrodrigocasas"
+        password = "rodri"
 
     usuario = UsuarioLogin(email=email, password=password)
     logger.info(repr(usuario))
@@ -67,6 +79,24 @@ async def login_con_query_params(email: str, password: str, response: Response):
 
 
 # Path operation que utiliza la dependencia para obtener los datos del usuario
-@router.get("/user", response_model=UsuarioOut)
+@router.get("/usuario", response_model=UsuarioOut)
 async def obtener_datos_usuario_logueado(usuario: EsteUsuario):
     return usuario
+
+
+@router.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie(key="jwt")
+    return {"status": "ok", "message": "Logout correcto."}
+
+
+@router.get("/menues")
+async def obtener_menues(usuario: EsteUsuario):
+    return {
+        "usuario": usuario,
+        "menues": [
+            {"nombre": "Auditorías", "url": "/auditorias"},
+            {"nombre": "Observaciones", "url": "/observaciones"},
+            {"nombre": "Requerimientos", "url": "/requerimientos"},
+        ],
+    }

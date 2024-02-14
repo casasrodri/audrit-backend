@@ -18,8 +18,23 @@ async def __obtener_usuario_logueado(request: Request) -> UsuarioDB:
 
 EsteUsuario = Annotated[UsuarioDB, Depends(__obtener_usuario_logueado)]
 
-PATH_PUBLICOS = ["/docs", "/openapi.json", "/jwt", "/jwt_debug"]
-PATH_PUBLICOS.extend(["/users/", "/users", "/mascotas"])
+PATH_PUBLICOS = [
+    "/docs",
+    "/openapi.json",
+    "/api/v1/jwt",
+    "/api/v1/jwt_debug",
+    "/api/v1/logout",
+]
+PATH_PUBLICOS.extend(
+    [
+        "/api/v1/users",
+        "/api/v1/users",
+        "/mascotas",
+        "/api/v1/ciclos",
+        "/api/v1/ciclos/nodos",
+        "/api/v1/",
+    ]
+)
 # PATH_PUBLICOS.append("/")
 
 

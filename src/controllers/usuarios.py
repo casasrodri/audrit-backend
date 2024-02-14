@@ -18,7 +18,7 @@ async def validar_credenciales(email: str, password: str) -> Usuario:
     if email != "rodri@casas.com":
         raise Exception("Usuario inexistente.")
 
-    if password != "adrianrodrigocasas":
+    if password != "rodri":
         raise Exception("Contraseña incorrecta.")
 
     usuario = Usuario()
