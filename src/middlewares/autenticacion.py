@@ -30,7 +30,7 @@ PATH_PUBLICOS.extend(
         "/api/v1/users",
         "/api/v1/users",
         "/mascotas",
-        "/api/v1/ciclos",
+        "/api/v1/ciclos/",
         "/api/v1/ciclos/nodos",
         "/api/v1/",
     ]

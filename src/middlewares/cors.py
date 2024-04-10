@@ -7,6 +7,8 @@ ORIGINS = [
     "http://localhost:3000",  # Nuxt.js
 ]
 
+# ORIGINS = ["*"]
+
 
 def cors_midd(app: FastAPI) -> None:
     """Aplica las póliticas de Cross-Origin Resource Sharing"""
@@ -15,12 +17,6 @@ def cors_midd(app: FastAPI) -> None:
         CORSMiddleware,
         allow_origins=ORIGINS,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "HEAD", "OPTIONS"],
-        allow_headers=[
-            "Access-Control-Allow-Headers",
-            "Content-Type",
-            "Authorization",
-            "Access-Control-Allow-Origin",
-            "Set-Cookie",
-        ],
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
