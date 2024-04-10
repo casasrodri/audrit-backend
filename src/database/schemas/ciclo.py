@@ -8,7 +8,6 @@ class CicloSchema(BaseSchema):
 
     id = Column(Integer, primary_key=True, index=True)
     sigla = Column(String, index=True)
-    sigla_extendida = Column(String, index=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
 
@@ -16,4 +15,4 @@ class CicloSchema(BaseSchema):
     padre = relationship("CicloSchema", remote_side=[id])
 
     def __repr__(self):
-        return f"<CicloSchema {self.nombre}>"
+        return f"<CicloDB {self.nombre}>"

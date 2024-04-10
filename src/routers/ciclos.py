@@ -23,4 +23,26 @@ router.add_api_route(
     endpoint=CiclosController.create,
     methods=["POST"],
     response_model=Ciclo,
+    status_code=201,
+)
+
+router.add_api_route(
+    path="/{id}",
+    endpoint=CiclosController.update,
+    methods=["PUT"],
+    response_model=Ciclo,
+)
+
+router.add_api_route(
+    path="/{id}",
+    endpoint=CiclosController.get,
+    methods=["GET"],
+    response_model=Ciclo,
+)
+
+router.add_api_route(
+    path="/{id}",
+    endpoint=CiclosController.delete,
+    methods=["DELETE"],
+    response_model=Ciclo,
 )

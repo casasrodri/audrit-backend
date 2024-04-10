@@ -6,12 +6,14 @@ from typing import Any
 class CicloBase(BaseModel):
     nombre: str
     sigla: str
-    sigla_extendida: str
     descripcion: str
 
 
 class CicloCreacion(CicloBase):
     padre_id: int | None
+
+
+class CicloActualizacion(CicloCreacion): ...
 
 
 class Ciclo(CicloBase, FromAttributes):
@@ -23,7 +25,6 @@ class CicloNodoData(BaseModel):
     id: int
     nombre: str
     sigla: str
-    sigla_extendida: str
     descripcion: str
     padre: int | None
 

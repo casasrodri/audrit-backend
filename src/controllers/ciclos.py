@@ -2,7 +2,7 @@ from .base import BaseController
 from fastapi import HTTPException
 from database.base import SqlDB
 from repositories.ciclos import CiclosRepo
-from models.ciclos import CicloCreacion, CicloNodo, CicloNodoData
+from models.ciclos import CicloCreacion, CicloNodo, CicloNodoData, CicloActualizacion
 
 
 class CiclosController(BaseController):
@@ -17,7 +17,6 @@ class CiclosController(BaseController):
                 id=ciclo.id,
                 nombre=ciclo.nombre,
                 sigla=ciclo.sigla,
-                sigla_extendida=ciclo.sigla_extendida,
                 descripcion=ciclo.descripcion,
                 padre=ciclo.padre_id,
             )
@@ -41,3 +40,22 @@ class CiclosController(BaseController):
 
     def create(db: SqlDB, ciclo: CicloCreacion):
         return CiclosRepo(db).create(ciclo)
+
+    def update(db: SqlDB, id: int, ciclo: CicloActualizacion):
+        return CiclosRepo(db).update(id, ciclo)
+
+    def get(db: SqlDB, id: int):
+        ciclo = CiclosRepo(db).get(id)
+
+        if ciclo is None:
+            raise HTTPException(status_code=404, detail="Ciclo no encontrado")
+
+        return ciclo
+
+    def delete(db: SqlDB, id: int):
+        ciclo = CiclosRepo(db).delete(id)
+
+        if ciclo is None:
+            raise HTTPException(status_code=404, detail="Ciclo no encontrado")
+
+        return ciclo
