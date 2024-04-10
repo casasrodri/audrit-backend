@@ -1,6 +1,7 @@
 from . import sesiones
 from . import mascotas
 from . import ciclos
+from . import auditorias
 
 
 def set_routers(app):
@@ -26,6 +27,15 @@ def set_routers(app):
         router=ciclos.router,
         prefix="/api/v1/ciclos",
         tags=["Ciclos"],
+        #####
+        # dependencies=[Depends(get_token_header)],
+        # responses={418: {"description": "I'm a teapot"}},
+    )
+
+    app.include_router(
+        router=auditorias.router,
+        prefix="/api/v1/auditorias",
+        tags=["Auditorías"],
         #####
         # dependencies=[Depends(get_token_header)],
         # responses={418: {"description": "I'm a teapot"}},
