@@ -1,6 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from database.base import BaseSchema
+from sqlalchemy import Column, Integer, String
+from database import BaseSchema
 
 
 class AuditoriaSchema(BaseSchema):

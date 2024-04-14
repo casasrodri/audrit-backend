@@ -1,6 +1,6 @@
-from .base import BaseRepository
-from database.schemas.mascota import MascotaSchema
-from models.mascotas import MascotaCreacion
+from repositories import BaseRepository
+from .schema import MascotaSchema
+from .model import MascotaCreacion
 
 
 class MascotasRepo(BaseRepository):

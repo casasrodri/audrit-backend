@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .base import BaseModel, FromAttributes
+from models import BaseModel, FromAttributes
 from typing import Any
 
 

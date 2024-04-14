@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Depends, status
 from typing import Annotated
-from models.usuarios import UsuarioDB
+from entidades.usuarios.model import UsuarioDB
 from utils.jwt import leer_token
 from jose.exceptions import JWTError
 from fastapi import status

@@ -1,8 +1,8 @@
-from .base import BaseController
+from controllers import BaseController
 from fastapi import HTTPException
-from database.base import SqlDB
-from repositories.auditorias import AuditoriasRepo
-from models.auditorias import AuditoriaCreacion
+from database import SqlDB
+from .repo import AuditoriasRepo
+from .model import AuditoriaCreacion
 
 
 class AuditoriasController(BaseController):

@@ -1,8 +1,8 @@
-from .base import BaseController
 from fastapi import HTTPException
-from database.base import SqlDB
-from repositories.ciclos import CiclosRepo
-from models.ciclos import CicloCreacion, CicloNodo, CicloNodoData, CicloActualizacion
+from controllers import BaseController
+from database import SqlDB
+from .repo import CiclosRepo
+from .model import CicloCreacion, CicloNodo, CicloNodoData, CicloActualizacion
 
 
 class CiclosController(BaseController):

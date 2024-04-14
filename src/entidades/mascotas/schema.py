@@ -1,6 +1,5 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from database.base import BaseSchema
+from sqlalchemy import Boolean, Column, Integer, String
+from database import BaseSchema
 
 
 class MascotaSchema(BaseSchema):

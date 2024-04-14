@@ -1,12 +1,12 @@
-from . import sesiones
-from . import mascotas
-from . import ciclos
-from . import auditorias
+from entidades.ciclos.router import router as ciclos_router
+from entidades.auditorias.router import router as auditorias_router
+from entidades.mascotas.router import router as mascotas_router
+from entidades.sesiones.router import router as sesiones_router
 
 
 def set_routers(app):
     app.include_router(
-        router=sesiones.router,
+        router=sesiones_router,
         prefix="/api/v1",
         tags=["Sesiones"],
         #####
@@ -15,7 +15,7 @@ def set_routers(app):
     )
 
     app.include_router(
-        router=mascotas.router,
+        router=mascotas_router,
         # prefix="/usuarios",
         tags=["Mascotas"],
         #####
@@ -24,7 +24,7 @@ def set_routers(app):
     )
 
     app.include_router(
-        router=ciclos.router,
+        router=ciclos_router,
         prefix="/api/v1/ciclos",
         tags=["Ciclos"],
         #####
@@ -33,7 +33,7 @@ def set_routers(app):
     )
 
     app.include_router(
-        router=auditorias.router,
+        router=auditorias_router,
         prefix="/api/v1/auditorias",
         tags=["Auditorías"],
         #####

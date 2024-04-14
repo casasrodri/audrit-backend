@@ -1,6 +1,6 @@
-from .base import BaseRepository
-from database.schemas.ciclo import CicloSchema
-from models.ciclos import CicloCreacion, CicloActualizacion
+from repositories import BaseRepository
+from .schema import CicloSchema
+from .model import CicloCreacion, CicloActualizacion
 
 
 class CiclosRepo(BaseRepository):

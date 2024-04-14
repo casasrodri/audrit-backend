@@ -1,4 +1,4 @@
-from .base import BaseModel, FromAttributes
+from models import BaseModel, FromAttributes
 
 
 class MascotaBase(BaseModel):

@@ -1,6 +1,6 @@
-from .base import BaseRepository
-from database.schemas.auditorias import AuditoriaSchema
-from models.auditorias import AuditoriaCreacion
+from repositories import BaseRepository
+from .schema import AuditoriaSchema
+from .model import AuditoriaCreacion
 from fastapi import HTTPException, status
 
 

@@ -1,8 +1,8 @@
-from .base import BaseController
 from fastapi import HTTPException
-from database.base import SqlDB
-from repositories.mascotas import MascotasRepo
-from models.mascotas import MascotaCreacion
+from controllers import BaseController
+from database import SqlDB
+from .repo import MascotasRepo
+from .model import MascotaCreacion
 
 
 class MascotasController(BaseController):

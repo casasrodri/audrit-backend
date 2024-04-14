@@ -1,4 +1,4 @@
-from models.usuarios import UsuarioDB
+from entidades.usuarios.model import UsuarioDB
 
 
 class DatabaseMock:

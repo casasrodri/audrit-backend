@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from controllers.ciclos import CiclosController
-from models.ciclos import Ciclo, CicloNodo
+from .controller import CiclosController
+from .model import Ciclo, CicloNodo
 
 router = APIRouter()
 

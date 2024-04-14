@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from controllers.mascotas import MascotasController
-from models.mascotas import Mascota
+from .controller import MascotasController
+from .model import Mascota
 
 router = APIRouter()
 

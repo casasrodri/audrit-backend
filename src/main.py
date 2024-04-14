@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from middlewares import set_middlewares
 from routers import set_routers
-from database.base import init_db
+from database import init_db
 
 app = FastAPI()
 

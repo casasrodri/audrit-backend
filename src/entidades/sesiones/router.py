@@ -1,11 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import Response
-from models.usuarios import UsuarioLogin
 from middlewares.autenticacion import EsteUsuario
-from models.usuarios import UsuarioOut
 from utils.jwt import crear_token, JWT_EXPIRE_MINUTES
 from utils.logger import logger
-from controllers.usuarios import validar_credenciales
+from entidades.usuarios.controller import validar_credenciales
+from entidades.usuarios.model import UsuarioLogin, UsuarioOut
 
 router = APIRouter()
 
