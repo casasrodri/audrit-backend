@@ -5,14 +5,14 @@ from .model import Auditoria
 router = APIRouter()
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=AuditoriasController.get_all,
     methods=["GET"],
     response_model=list[Auditoria],
 )
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=AuditoriasController.create,
     methods=["POST"],
     response_model=Auditoria,
