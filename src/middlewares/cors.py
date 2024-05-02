@@ -1,10 +1,13 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+
+# from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 
 ORIGINS = [
     "http://localhost:5173",  # Vue.js
     "http://localhost:4321",  # Astro.js
     "http://localhost:3000",  # Nuxt.js
+    "http://192.168.1.4:5173",  # Galaxy
 ]
 
 # ORIGINS = ["*"]

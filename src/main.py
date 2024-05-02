@@ -5,7 +5,7 @@ from database import init_db
 
 app = FastAPI()
 
-init_db()
+
 set_middlewares(app)
 
 if __name__ == "__main__":
@@ -72,3 +72,4 @@ async def info_control(id: int):
 
 
 set_routers(app)
+init_db()

@@ -7,6 +7,7 @@ from typing import Annotated
 from config.env import Environment, DataBase
 from utils.logger import logger
 
+
 engine: Engine = None
 motor: str = None
 
