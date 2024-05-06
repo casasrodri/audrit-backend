@@ -1,7 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from database import BaseSchema
-from entidades.auditorias.schema import AuditoriaSchema
 
 
 class RevisionSchema(BaseSchema):
@@ -24,7 +23,11 @@ class RevisionSchema(BaseSchema):
     estado = Column(String, index=True)
     informe = Column(String)
 
-    relevamientos = relationship("RelevamientoSchema")
+    relevamientos = relationship("RelevamientoSchema", back_populates="revision")
+    riesgos = relationship(
+        "RiesgoSchema",
+        back_populates="revision",
+    )
 
     def __repr__(self):
         return f"<RevisionDB {self.nombre}>"

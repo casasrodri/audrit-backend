@@ -20,10 +20,8 @@ class ObjetivoControlRepo(BaseRepository):
     def create(self, objetivo: ObjetivoControlCreacion):
 
         db_objetivo = ObjetivoControlSchema(
-            sigla=objetivo.sigla,
             nombre=objetivo.nombre,
             descripcion=objetivo.descripcion,
-            padre_id=objetivo.padre_id,
         )
 
         self.db.add(db_objetivo)

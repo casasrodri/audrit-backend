@@ -1,11 +1,9 @@
 from sqlalchemy import Column, ForeignKey, Integer, Table
-from sqlalchemy.ext.declarative import declarative_base
+from database import BaseSchema
 
-Base = declarative_base()
-
-relacion_riesgos_objetivos_control = Table(
-    "relacion_riesgos_objetivos_control",
-    Base.metadata,
+riesgos_objetivos_control = Table(
+    "riesgos_objctrl",
+    BaseSchema.metadata,
     Column("riesgo_id", Integer, ForeignKey("riesgos.id"), primary_key=True),
     Column(
         "objetivo_control_id",

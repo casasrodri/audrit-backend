@@ -1,38 +1,25 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
 from typing import Any
+from entidades.objetivos_control.model import ObjetivoControl
 from entidades.revisiones.model import Revision
 
 
-class RelevamientoBase(BaseModel):
-    tipo: str
-    sigla: str | None
+class RiesgoBase(BaseModel):
     nombre: str
+    descripcion: str
+    nivel: str
 
 
-class RelevamientoCreacion(RelevamientoBase):
+class RiesgoCreacion(RiesgoBase):
+    objetivos_control: list[int]
     revision_id: int
-    padre_id: int | None
 
 
-class RelevamientoActualizacion(RelevamientoCreacion): ...
+class RiesgoActualizacion(RiesgoCreacion): ...
 
 
-class Relevamiento(RelevamientoBase, FromAttributes):
+class Riesgo(RiesgoBase, FromAttributes):
     id: int
     revision: Revision
-    padre: Relevamiento | None
-
-
-class RelevamientoNodoData(RelevamientoBase):
-    # TODO Corregir
-    id: int
-    revision: int
-    padre: int | None
-
-
-class RelevamientoNodo(BaseModel):
-    key: int
-    label: str
-    data: RelevamientoNodoData
-    children: list[RelevamientoNodo] = []
+    objetivos_control: list[ObjetivoControl] = []
