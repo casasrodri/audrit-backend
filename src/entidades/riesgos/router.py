@@ -1,10 +1,11 @@
 from fastapi import APIRouter
 from .controller import RiesgoController
-from .model import Riesgo
+from entidades.objetivos_control.model import ObjetivoControl
+from .model import Riesgo, ResultadoBusquedaRiesgo
+from entidades.documentos.model import Documento
 
 router = APIRouter()
 
-# Ok
 router.add_api_route(
     path="",
     endpoint=RiesgoController.get_all,
@@ -19,12 +20,25 @@ router.add_api_route(
     response_model=list[Riesgo],
 )
 
-# Ok
 router.add_api_route(
     path="/{id}",
     endpoint=RiesgoController.get,
     methods=["GET"],
     response_model=Riesgo,
+)
+
+router.add_api_route(
+    path="/{id}",
+    endpoint=RiesgoController.update,
+    methods=["PUT"],
+    response_model=Riesgo,
+)
+
+router.add_api_route(
+    path="/revision/{revision_id}/buscarRiesgo/{texto_buscado}",
+    endpoint=RiesgoController.buscar,
+    methods=["GET"],
+    response_model=list[ResultadoBusquedaRiesgo],
 )
 
 # TODO
@@ -35,14 +49,6 @@ router.add_api_route(
     response_model=Riesgo,
     status_code=201,
 )
-
-# # TODO
-# router.add_api_route(
-#     path="/{id}",
-#     endpoint=RiesgoController.update,
-#     methods=["PUT"],
-#     response_model=Riesgo,
-# )
 
 # # TODO
 # router.add_api_route(

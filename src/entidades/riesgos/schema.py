@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from database import BaseSchema
 from sqlalchemy.orm import mapped_column
-from relaciones.tablas import riesgos_objetivos_control
+from relaciones.tablas import riesgos_objetivos_control, riesgos_documentos
 
 
 class RiesgoSchema(BaseSchema):
@@ -16,13 +16,20 @@ class RiesgoSchema(BaseSchema):
     # Relación muchos-a-muchos con ObjetivoControl
     objetivos_control = relationship(
         "ObjetivoControlSchema",
-        secondary=lambda: riesgos_objetivos_control,
+        secondary=riesgos_objetivos_control,
         back_populates="riesgos",
     )
 
     # Relación uno-a-muchos con Revision
     revision_id = Column(Integer(), ForeignKey("revisiones.id"))
     revision = relationship("RevisionSchema", back_populates="riesgos")
+
+    # Relación muchos-a-muchos con Documentos
+    documentos = relationship(
+        "DocumentoSchema",
+        secondary=riesgos_documentos,
+        back_populates="riesgos",
+    )
 
     def __repr__(self):
         return f"<RiesgoDB {self.nombre}>"

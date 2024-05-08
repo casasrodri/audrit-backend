@@ -41,18 +41,33 @@ class RiesgoRepo(BaseRepository):
 
         return db_riesgo
 
-    # def update(self, id: int, riesgo: RiesgoActualizacion):
-    #     db_riesgo = self.get(id)
+    def update(self, id: int, riesgo: RiesgoActualizacion):
+        db_riesgo = self.get(id)
 
-    #     db_riesgo.sigla = riesgo.sigla
-    #     db_riesgo.nombre = riesgo.nombre
-    #     db_riesgo.descripcion = riesgo.descripcion
-    #     db_riesgo.padre_id = riesgo.padre_id
+        db_riesgo.nombre = riesgo.nombre
+        db_riesgo.descripcion = riesgo.descripcion
+        db_riesgo.nivel = riesgo.nivel
 
-    #     self.db.commit()
-    #     self.db.refresh(db_riesgo)
+        db_riesgo.objetivos_control = [
+            self.db.query(ObjetivoControlSchema).get(objetivo_id)
+            for objetivo_id in riesgo.objetivos_control
+        ]
 
-    #     return db_riesgo
+        self.db.commit()
+        self.db.refresh(db_riesgo)
+
+        return db_riesgo
+
+    def buscar(self, revision_id: int, texto_buscado: str):
+        return (
+            self.db.query(RiesgoSchema)
+            .filter(RiesgoSchema.revision_id == revision_id)
+            .filter(
+                RiesgoSchema.nombre.ilike(f"%{texto_buscado}%")
+                | RiesgoSchema.descripcion.ilike(f"%{texto_buscado}%")
+            )
+            .all()
+        )
 
     # def delete(self, id: int):
     #     db_riesgo = self.get(id)

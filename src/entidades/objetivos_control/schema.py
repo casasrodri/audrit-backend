@@ -18,7 +18,7 @@ class ObjetivoControlSchema(BaseSchema):
     # Relación muchos-a-muchos con Riesgo
     riesgos = relationship(
         "RiesgoSchema",
-        secondary=lambda: riesgos_objetivos_control,
+        secondary=riesgos_objetivos_control,
         back_populates="objetivos_control",
     )
 
