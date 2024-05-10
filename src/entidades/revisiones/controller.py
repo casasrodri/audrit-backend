@@ -1,7 +1,7 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .repo import RevisionesRepo
+from .schema import RevisionSchema
 from .model import (
     RevisionCreacion,
     RevisionNodo,
@@ -12,14 +12,19 @@ from .model import (
 
 class RevisionesController(BaseController):
     def get_all(db: SqlDB):
-        return RevisionesRepo(db).get_all()
+        return db.query(RevisionSchema).all()
 
     def get_all_auditoria(db: SqlDB, auditoria_id: int):
-        revisiones = RevisionesRepo(db).get_all_auditoria(auditoria_id)
+        revisiones = (
+            db.query(RevisionSchema)
+            .filter(RevisionSchema.auditoria_id == auditoria_id)
+            .all()
+        )
+
         return revisiones
 
     def get_nodos(db: SqlDB, auditoria_id: int):
-        revisiones = RevisionesRepo(db).get_all_auditoria(auditoria_id)
+        revisiones = RevisionesController.get_all_auditoria(db, auditoria_id)
 
         def crear_nodo(revision):
             data = RevisionNodoData(
@@ -50,23 +55,48 @@ class RevisionesController(BaseController):
         return out
 
     def create(db: SqlDB, revision: RevisionCreacion):
-        return RevisionesRepo(db).create(revision)
+        db_revision = RevisionSchema(
+            sigla=revision.sigla,
+            nombre=revision.nombre,
+            descripcion=revision.descripcion,
+            padre_id=revision.padre_id,
+        )
+
+        db.add(db_revision)
+        db.commit()
+        db.refresh(db_revision)
+
+        return db_revision
 
     def update(db: SqlDB, id: int, revision: RevisionActualizacion):
-        return RevisionesRepo(db).update(id, revision)
+        db_revision = RevisionesController.get(db, id)
+
+        db_revision.sigla = revision.sigla
+        db_revision.nombre = revision.nombre
+        db_revision.descripcion = revision.descripcion
+        db_revision.padre_id = revision.padre_id
+
+        db.commit()
+        db.refresh(db_revision)
+
+        return db_revision
 
     def get(db: SqlDB, id: int):
-        revision = RevisionesRepo(db).get(id)
+        revision = db.query(RevisionSchema).get(id)
 
         if revision is None:
-            raise HTTPException(status_code=404, detail="Revision no encontrada.")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Revision no encontrada."
+            )
 
         return revision
 
     def delete(db: SqlDB, id: int):
-        revision = RevisionesRepo(db).delete(id)
+        db_revision = RevisionesController.get(db, id)
 
-        if revision is None:
-            raise HTTPException(status_code=404, detail="Revision no encontrado")
+        print("Objeto encontrado: ", db_revision)
 
-        return revision
+        db.delete(db_revision)
+        db.commit()
+
+        return db_revision

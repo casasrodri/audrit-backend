@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from controllers import BaseController
 from database import SqlDB
-from .repo import RelevamientosRepo
+from .schema import RelevamientoSchema
 from .model import (
     RelevamientoCreacion,
     RelevamientoNodo,
@@ -12,10 +12,17 @@ from .model import (
 
 class RelevamientosController(BaseController):
     def get_all(db: SqlDB):
-        return RelevamientosRepo(db).get_all()
+        return db.query(RelevamientoSchema).all()
+
+    def get_all_by_revision(db: SqlDB, revision_id: int):
+        return (
+            db.query(RelevamientoSchema)
+            .filter(RelevamientoSchema.revision_id == revision_id)
+            .all()
+        )
 
     def get_nodos_by_revision(db: SqlDB, revision_id: int):
-        relevamientos = RelevamientosRepo(db).get_all_by_revision(revision_id)
+        relevamientos = RelevamientosController.get_all_by_revision(db, revision_id)
 
         def crear_nodo(relevamiento):
             data = RelevamientoNodoData(
@@ -47,13 +54,34 @@ class RelevamientosController(BaseController):
         return out
 
     def create(db: SqlDB, relevamiento: RelevamientoCreacion):
-        return RelevamientosRepo(db).create(relevamiento)
+        db_relevamiento = RelevamientoSchema(
+            sigla=relevamiento.sigla,
+            nombre=relevamiento.nombre,
+            descripcion=relevamiento.descripcion,
+            padre_id=relevamiento.padre_id,
+        )
+
+        db.add(db_relevamiento)
+        db.commit()
+        db.refresh(db_relevamiento)
+
+        return db_relevamiento
 
     def update(db: SqlDB, id: int, relevamiento: RelevamientoActualizacion):
-        return RelevamientosRepo(db).update(id, relevamiento)
+        db_relevamiento = RelevamientosController.get(db, id)
+
+        db_relevamiento.sigla = relevamiento.sigla
+        db_relevamiento.nombre = relevamiento.nombre
+        db_relevamiento.descripcion = relevamiento.descripcion
+        db_relevamiento.padre_id = relevamiento.padre_id
+
+        db.commit()
+        db.refresh(db_relevamiento)
+
+        return db_relevamiento
 
     def get(db: SqlDB, id: int):
-        relevamiento = RelevamientosRepo(db).get(id)
+        relevamiento = db.query(RelevamientoSchema).get(id)
 
         if relevamiento is None:
             raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
@@ -61,9 +89,10 @@ class RelevamientosController(BaseController):
         return relevamiento
 
     def delete(db: SqlDB, id: int):
-        relevamiento = RelevamientosRepo(db).delete(id)
+        db_relevamiento = RelevamientosController.get(db, id)
+        print("Objeto encontrado: ", db_relevamiento)
 
-        if relevamiento is None:
-            raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
+        db.delete(db_relevamiento)
+        db.commit()
 
-        return relevamiento
+        return db_relevamiento

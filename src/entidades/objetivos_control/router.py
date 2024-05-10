@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .controller import ObjetivoControlController
+from .controller import ObjetivosControlController
 from .model import ObjetivoControl, ObjetivoControlCreacion
 
 router = APIRouter()
@@ -7,7 +7,7 @@ router = APIRouter()
 # Ok
 router.add_api_route(
     path="",
-    endpoint=ObjetivoControlController.get_all,
+    endpoint=ObjetivosControlController.get_all,
     methods=["GET"],
     response_model=list[ObjetivoControl],
 )
@@ -15,7 +15,7 @@ router.add_api_route(
 # Ok
 # router.add_api_route(
 #     path="/{id}",
-#     endpoint=ObjetivoControlController.get,
+#     endpoint=ObjetivosControlController.get,
 #     methods=["GET"],
 #     response_model=Relevamiento,
 # )
@@ -23,7 +23,7 @@ router.add_api_route(
 # TODO
 router.add_api_route(
     path="",
-    endpoint=ObjetivoControlController.create,
+    endpoint=ObjetivosControlController.create,
     methods=["POST"],
     response_model=ObjetivoControl,
     status_code=201,
@@ -32,7 +32,7 @@ router.add_api_route(
 # # TODO
 # router.add_api_route(
 #     path="/{id}",
-#     endpoint=ObjetivoControlController.update,
+#     endpoint=ObjetivosControlController.update,
 #     methods=["PUT"],
 #     response_model=Relevamiento,
 # )
@@ -40,7 +40,7 @@ router.add_api_route(
 # # TODO
 # router.add_api_route(
 #     path="/{id}",
-#     endpoint=ObjetivoControlController.delete,
+#     endpoint=ObjetivosControlController.delete,
 #     methods=["DELETE"],
 #     response_model=Relevamiento,
 # )

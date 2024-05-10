@@ -1,32 +1,45 @@
 from fastapi import HTTPException
 from controllers import BaseController
 from database import SqlDB
-from .repo import ObjetivoControlRepo
 from .model import ObjetivoControlCreacion
+from .schema import ObjetivoControlSchema
 
 
-class ObjetivoControlController(BaseController):
+class ObjetivosControlController(BaseController):
     def get_all(db: SqlDB):
-        return ObjetivoControlRepo(db).get_all()
+        return db.query(ObjetivoControlSchema).all()
 
     def create(db: SqlDB, objetivo: ObjetivoControlCreacion):
-        return ObjetivoControlRepo(db).create(objetivo)
+        db_objetivo = ObjetivoControlSchema(
+            nombre=objetivo.nombre,
+            descripcion=objetivo.descripcion,
+        )
+
+        db.add(db_objetivo)
+        db.commit()
+        db.refresh(db_objetivo)
+
+        return db_objetivo
+
+    def get(db: SqlDB, id: int):
+        objetivo = db.query(ObjetivoControlSchema).get(id)
+
+        if objetivo is None:
+            raise HTTPException(
+                status_code=404, detail="Objetivo de control no encontrado"
+            )
+
+        return objetivo
+
+    def delete(db: SqlDB, id: int):
+        db_objetivo = ObjetivosControlController.get(db, id)
+
+        print("Objeto encontrado: ", db_objetivo)
+
+        db.delete(db_objetivo)
+        db.commit()
+
+        return db_objetivo
 
     # def update(db: SqlDB, id: int, objetivo: RelevamientoActualizacion):
     #     return ObjetivoControlRepo(db).update(id, objetivo)
-
-    # def get(db: SqlDB, id: int):
-    #     objetivo = ObjetivoControlRepo(db).get(id)
-
-    #     if objetivo is None:
-    #         raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
-
-    #     return objetivo
-
-    # def delete(db: SqlDB, id: int):
-    #     objetivo = ObjetivoControlRepo(db).delete(id)
-
-    #     if objetivo is None:
-    #         raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
-
-    #     return objetivo

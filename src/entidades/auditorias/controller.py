@@ -1,16 +1,26 @@
 from controllers import BaseController
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from database import SqlDB
-from .repo import AuditoriasRepo
 from .model import AuditoriaCreacion
+
+
+from .schema import AuditoriaSchema
 
 
 class AuditoriasController(BaseController):
     def get_all(db: SqlDB):
-        return AuditoriasRepo(db).get_all()
+        return db.query(AuditoriaSchema).all()
 
     def get(db: SqlDB, sigla: str = None, id: int = None):
-        auditoria = AuditoriasRepo(db).get(sigla, id)
+        tabla = db.query(AuditoriaSchema)
+
+        if sigla:
+            tabla = tabla.filter(AuditoriaSchema.sigla == sigla)
+
+        if id:
+            tabla = tabla.filter(AuditoriaSchema.id == id)
+
+        auditoria = tabla.first()
 
         if not auditoria:
             raise HTTPException(status_code=404, detail="Auditoria no encontrada")
@@ -24,4 +34,16 @@ class AuditoriasController(BaseController):
         return AuditoriasController.get(db, id=id)
 
     def create(db: SqlDB, auditoria: AuditoriaCreacion):
-        return AuditoriasRepo(db).create(auditoria)
+        db_aud = AuditoriaSchema(**auditoria.__dict__)
+
+        if AuditoriasController.get(db, sigla=auditoria.sigla):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Ya existe una auditoría con la sigla '{auditoria.sigla}'",
+            )
+
+        db.add(db_aud)
+        db.commit()
+        db.refresh(db_aud)
+
+        return db_aud
