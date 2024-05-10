@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, Integer, String
 from database import BaseSchema
 
 
-class MascotaSchema(BaseSchema):
+class MascotaDB(BaseSchema):
     __tablename__ = "mascotas"
 
     id = Column(Integer, primary_key=True, index=True)

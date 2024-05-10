@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from database import BaseSchema
 
 
-class RevisionSchema(BaseSchema):
+class RevisionDB(BaseSchema):
     __tablename__ = "revisiones"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -11,21 +11,21 @@ class RevisionSchema(BaseSchema):
         Integer,
         ForeignKey("auditorias.id"),
     )
-    auditoria = relationship("AuditoriaSchema", remote_side="AuditoriaSchema.id")
+    auditoria = relationship("AuditoriaDB", remote_side="AuditoriaDB.id")
 
     sigla = Column(String, index=True, nullable=True)
     nombre = Column(String, index=True)
     descripcion = Column(String)
 
     padre_id = Column(Integer, ForeignKey("revisiones.id"), nullable=True)
-    padre = relationship("RevisionSchema", remote_side="RevisionSchema.id")
+    padre = relationship("RevisionDB", remote_side="RevisionDB.id")
 
     estado = Column(String, index=True)
     informe = Column(String)
 
-    relevamientos = relationship("RelevamientoSchema", back_populates="revision")
+    relevamientos = relationship("RelevamientoDB", back_populates="revision")
     riesgos = relationship(
-        "RiesgoSchema",
+        "RiesgoDB",
         back_populates="revision",
     )
 

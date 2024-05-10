@@ -5,10 +5,10 @@ from sqlalchemy.orm import mapped_column
 
 from relaciones.tablas import riesgos_objetivos_control
 
-from entidades.riesgos.schema import RiesgoSchema
+from entidades.riesgos.schema import RiesgoDB
 
 
-class ObjetivoControlSchema(BaseSchema):
+class ObjetivoControlDB(BaseSchema):
     __tablename__ = "objetivos_control"
 
     id = mapped_column(Integer, primary_key=True, index=True)
@@ -17,7 +17,7 @@ class ObjetivoControlSchema(BaseSchema):
 
     # Relación muchos-a-muchos con Riesgo
     riesgos = relationship(
-        "RiesgoSchema",
+        "RiesgoDB",
         secondary=riesgos_objetivos_control,
         back_populates="objetivos_control",
     )

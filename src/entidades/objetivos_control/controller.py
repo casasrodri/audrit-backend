@@ -2,15 +2,15 @@ from fastapi import HTTPException
 from controllers import BaseController
 from database import SqlDB
 from .model import ObjetivoControlCreacion
-from .schema import ObjetivoControlSchema
+from .schema import ObjetivoControlDB
 
 
 class ObjetivosControlController(BaseController):
     def get_all(db: SqlDB):
-        return db.query(ObjetivoControlSchema).all()
+        return db.query(ObjetivoControlDB).all()
 
     def create(db: SqlDB, objetivo: ObjetivoControlCreacion):
-        db_objetivo = ObjetivoControlSchema(
+        db_objetivo = ObjetivoControlDB(
             nombre=objetivo.nombre,
             descripcion=objetivo.descripcion,
         )
@@ -22,7 +22,7 @@ class ObjetivosControlController(BaseController):
         return db_objetivo
 
     def get(db: SqlDB, id: int):
-        objetivo = db.query(ObjetivoControlSchema).get(id)
+        objetivo = db.query(ObjetivoControlDB).get(id)
 
         if objetivo is None:
             raise HTTPException(

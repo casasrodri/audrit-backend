@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 from database import BaseSchema
 
 
-class AuditoriaSchema(BaseSchema):
+class AuditoriaDB(BaseSchema):
     __tablename__ = "auditorias"
 
     id = Column(Integer, primary_key=True, index=True)

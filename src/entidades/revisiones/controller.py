@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .schema import RevisionSchema
+from .schema import RevisionDB
 from .model import (
     RevisionCreacion,
     RevisionNodo,
@@ -12,13 +12,11 @@ from .model import (
 
 class RevisionesController(BaseController):
     def get_all(db: SqlDB):
-        return db.query(RevisionSchema).all()
+        return db.query(RevisionDB).all()
 
     def get_all_auditoria(db: SqlDB, auditoria_id: int):
         revisiones = (
-            db.query(RevisionSchema)
-            .filter(RevisionSchema.auditoria_id == auditoria_id)
-            .all()
+            db.query(RevisionDB).filter(RevisionDB.auditoria_id == auditoria_id).all()
         )
 
         return revisiones
@@ -55,7 +53,7 @@ class RevisionesController(BaseController):
         return out
 
     def create(db: SqlDB, revision: RevisionCreacion):
-        db_revision = RevisionSchema(
+        db_revision = RevisionDB(
             sigla=revision.sigla,
             nombre=revision.nombre,
             descripcion=revision.descripcion,
@@ -82,7 +80,7 @@ class RevisionesController(BaseController):
         return db_revision
 
     def get(db: SqlDB, id: int):
-        revision = db.query(RevisionSchema).get(id)
+        revision = db.query(RevisionDB).get(id)
 
         if revision is None:
             raise HTTPException(

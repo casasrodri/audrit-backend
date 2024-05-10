@@ -2,25 +2,23 @@ from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
 from .model import RiesgoCreacion, RiesgoActualizacion
-from .schema import RiesgoSchema
+from .schema import RiesgoDB
 from entidades.revisiones.controller import RevisionesController
 from entidades.objetivos_control.controller import ObjetivosControlController
 
 
 class RiesgosController(BaseController):
     def get_all(db: SqlDB):
-        return db.query(RiesgoSchema).all()
+        return db.query(RiesgoDB).all()
 
     def get_all_by_revision(db: SqlDB, revision_id: int):
-        return (
-            db.query(RiesgoSchema).filter(RiesgoSchema.revision_id == revision_id).all()
-        )
+        return db.query(RiesgoDB).filter(RiesgoDB.revision_id == revision_id).all()
 
     def create(db: SqlDB, riesgo: RiesgoCreacion):
-        # revision = db.query(RevisionSchema).get(riesgo.revision_id)
+        # revision = db.query(RevisionDB).get(riesgo.revision_id)
         revision = RevisionesController.get(db, riesgo.revision_id)
 
-        db_riesgo = RiesgoSchema(
+        db_riesgo = RiesgoDB(
             nombre=riesgo.nombre,
             descripcion=riesgo.descripcion,
             nivel=riesgo.nivel,
@@ -28,7 +26,7 @@ class RiesgosController(BaseController):
         )
 
         db_riesgo.objetivos_control = [
-            # db.query(ObjetivoControlSchema).get(objetivo_id)
+            # db.query(ObjetivoControlDB).get(objetivo_id)
             ObjetivosControlController.get(db, objetivo_id)
             for objetivo_id in riesgo.objetivos_control
         ]
@@ -47,7 +45,7 @@ class RiesgosController(BaseController):
         db_riesgo.nivel = riesgo.nivel
 
         db_riesgo.objetivos_control = [
-            # db.query(ObjetivoControlSchema).get(objetivo_id)
+            # db.query(ObjetivoControlDB).get(objetivo_id)
             ObjetivosControlController.get(db, objetivo_id)
             for objetivo_id in riesgo.objetivos_control
         ]
@@ -58,7 +56,7 @@ class RiesgosController(BaseController):
         return db_riesgo
 
     def get(db: SqlDB, id: int):
-        riesgo = db.query(RiesgoSchema).get(id)
+        riesgo = db.query(RiesgoDB).get(id)
 
         if riesgo is None:
             raise HTTPException(
@@ -69,11 +67,11 @@ class RiesgosController(BaseController):
 
     def buscar(db: SqlDB, revision_id: int, texto_buscado: str):
         return (
-            db.query(RiesgoSchema)
-            .filter(RiesgoSchema.revision_id == revision_id)
+            db.query(RiesgoDB)
+            .filter(RiesgoDB.revision_id == revision_id)
             .filter(
-                RiesgoSchema.nombre.ilike(f"%{texto_buscado}%")
-                | RiesgoSchema.descripcion.ilike(f"%{texto_buscado}%")
+                RiesgoDB.nombre.ilike(f"%{texto_buscado}%")
+                | RiesgoDB.descripcion.ilike(f"%{texto_buscado}%")
             )
             .all()
         )

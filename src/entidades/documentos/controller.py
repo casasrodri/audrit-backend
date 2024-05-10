@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .schema import DocumentoSchema
+from .schema import DocumentoDB
 from .model import (
     DocumentoCreacion,
     DocumentoActualizacion,
@@ -10,12 +10,12 @@ from .model import (
 
 class DocumentosController(BaseController):
     def get_all(db: SqlDB):
-        return db.query(DocumentoSchema).all()
+        return db.query(DocumentoDB).all()
 
     def get_by_relevamiento(db: SqlDB, relevamiento_id: int):
         documento = (
-            db.query(DocumentoSchema)
-            .filter(DocumentoSchema.relevamiento_id == relevamiento_id)
+            db.query(DocumentoDB)
+            .filter(DocumentoDB.relevamiento_id == relevamiento_id)
             .first()
         )
 
@@ -27,7 +27,7 @@ class DocumentosController(BaseController):
         return documento
 
     def create(db: SqlDB, documento: DocumentoCreacion):
-        db_documento = DocumentoSchema(
+        db_documento = DocumentoDB(
             relevamiento_id=documento.relevamiento_id,
             contenido=documento.contenido,
         )
@@ -50,7 +50,7 @@ class DocumentosController(BaseController):
         return db_documento
 
     def get(db: SqlDB, id: int):
-        documento = db.query(DocumentoSchema).filter(DocumentoSchema.id == id).first()
+        documento = db.query(DocumentoDB).filter(DocumentoDB.id == id).first()
 
         if documento is None:
             raise HTTPException(

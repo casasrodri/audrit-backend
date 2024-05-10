@@ -19,7 +19,7 @@ riesgos_documentos = Table(
     BaseSchema.metadata,
     Column("riesgo_id", Integer, ForeignKey("riesgos.id"), primary_key=True),
     Column(
-        "documentos_id",
+        "documento_id",
         Integer,
         ForeignKey("documentos.id"),
         primary_key=True,

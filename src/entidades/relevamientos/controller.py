@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from controllers import BaseController
 from database import SqlDB
-from .schema import RelevamientoSchema
+from .schema import RelevamientoDB
 from .model import (
     RelevamientoCreacion,
     RelevamientoNodo,
@@ -12,12 +12,12 @@ from .model import (
 
 class RelevamientosController(BaseController):
     def get_all(db: SqlDB):
-        return db.query(RelevamientoSchema).all()
+        return db.query(RelevamientoDB).all()
 
     def get_all_by_revision(db: SqlDB, revision_id: int):
         return (
-            db.query(RelevamientoSchema)
-            .filter(RelevamientoSchema.revision_id == revision_id)
+            db.query(RelevamientoDB)
+            .filter(RelevamientoDB.revision_id == revision_id)
             .all()
         )
 
@@ -54,7 +54,7 @@ class RelevamientosController(BaseController):
         return out
 
     def create(db: SqlDB, relevamiento: RelevamientoCreacion):
-        db_relevamiento = RelevamientoSchema(
+        db_relevamiento = RelevamientoDB(
             sigla=relevamiento.sigla,
             nombre=relevamiento.nombre,
             descripcion=relevamiento.descripcion,
@@ -81,7 +81,7 @@ class RelevamientosController(BaseController):
         return db_relevamiento
 
     def get(db: SqlDB, id: int):
-        relevamiento = db.query(RelevamientoSchema).get(id)
+        relevamiento = db.query(RelevamientoDB).get(id)
 
         if relevamiento is None:
             raise HTTPException(status_code=404, detail="Relevamiento no encontrado")

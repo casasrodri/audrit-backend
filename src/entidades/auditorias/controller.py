@@ -4,21 +4,21 @@ from database import SqlDB
 from .model import AuditoriaCreacion
 
 
-from .schema import AuditoriaSchema
+from .schema import AuditoriaDB
 
 
 class AuditoriasController(BaseController):
     def get_all(db: SqlDB):
-        return db.query(AuditoriaSchema).all()
+        return db.query(AuditoriaDB).all()
 
     def get(db: SqlDB, sigla: str = None, id: int = None):
-        tabla = db.query(AuditoriaSchema)
+        tabla = db.query(AuditoriaDB)
 
         if sigla:
-            tabla = tabla.filter(AuditoriaSchema.sigla == sigla)
+            tabla = tabla.filter(AuditoriaDB.sigla == sigla)
 
         if id:
-            tabla = tabla.filter(AuditoriaSchema.id == id)
+            tabla = tabla.filter(AuditoriaDB.id == id)
 
         auditoria = tabla.first()
 
@@ -34,7 +34,7 @@ class AuditoriasController(BaseController):
         return AuditoriasController.get(db, id=id)
 
     def create(db: SqlDB, auditoria: AuditoriaCreacion):
-        db_aud = AuditoriaSchema(**auditoria.__dict__)
+        db_aud = AuditoriaDB(**auditoria.__dict__)
 
         if AuditoriasController.get(db, sigla=auditoria.sigla):
             raise HTTPException(
