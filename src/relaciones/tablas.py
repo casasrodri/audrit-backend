@@ -26,3 +26,17 @@ riesgos_documentos = Table(
     ),
     extend_existing=True,
 )
+
+
+controles_documentos = Table(
+    "controles_documentos",
+    BaseSchema.metadata,
+    Column("control_id", Integer, ForeignKey("controles.id"), primary_key=True),
+    Column(
+        "documento_id",
+        Integer,
+        ForeignKey("documentos.id"),
+        primary_key=True,
+    ),
+    extend_existing=True,
+)

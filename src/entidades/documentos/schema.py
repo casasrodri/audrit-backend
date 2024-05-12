@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from database import BaseSchema
 from entidades.relevamientos.schema import RelevamientoDB
-from relaciones.tablas import riesgos_documentos
+from relaciones.tablas import riesgos_documentos, controles_documentos
 
 
 class DocumentoDB(BaseSchema):
@@ -24,6 +24,11 @@ class DocumentoDB(BaseSchema):
     riesgos = relationship(
         "RiesgoDB",
         secondary=riesgos_documentos,
+        back_populates="documentos",
+    )
+    controles = relationship(
+        "ControlDB",
+        secondary=controles_documentos,
         back_populates="documentos",
     )
 

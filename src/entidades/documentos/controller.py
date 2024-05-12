@@ -9,6 +9,8 @@ from .model import (
 from json import loads
 from entidades.riesgos.controller import RiesgosController
 from entidades.riesgos.schema import RiesgoDB
+from entidades.controles.controller import ControlesController
+from entidades.controles.schema import ControlDB
 
 
 def buscar_objetos(
@@ -46,6 +48,28 @@ def asociar_riesgos(documento: DocumentoDB, blocks: list, db: SqlDB):
             documento.riesgos.remove(ries)
         if documento in ries.documentos:
             ries.documentos.remove(documento)
+
+
+def asociar_controles(documento: DocumentoDB, blocks: list, db: SqlDB):
+    obj_asociados = buscar_objetos("control", blocks, ControlesController, db)
+
+    # Se incorporan asociaciones:
+    ctrl: ControlDB
+    for ctrl in obj_asociados:
+        if ctrl not in documento.controles:
+            documento.controles.append(ctrl)
+
+        if documento not in ctrl.documentos:
+            ctrl.documentos.append(documento)
+
+    # Se eliminan los que no están más:
+    eliminar = set(documento.controles) - set(obj_asociados)
+
+    for ctrl in eliminar:
+        if ctrl in documento.controles:
+            documento.controles.remove(ctrl)
+        if documento in ctrl.documentos:
+            ctrl.documentos.remove(documento)
 
 
 class DocumentosController(BaseController):
@@ -89,6 +113,7 @@ class DocumentosController(BaseController):
 
         # Se generan las asociaciones
         asociar_riesgos(db_documento, blocks, db)
+        asociar_controles(db_documento, blocks, db)
 
         db.commit()
         db.refresh(db_documento)

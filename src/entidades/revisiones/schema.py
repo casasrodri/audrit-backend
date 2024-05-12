@@ -28,6 +28,10 @@ class RevisionDB(BaseSchema):
         "RiesgoDB",
         back_populates="revision",
     )
+    controles = relationship(
+        "ControlDB",
+        back_populates="revision",
+    )
 
     def __repr__(self):
         return f"<RevisionDB:{self.id} {self.nombre}>"
