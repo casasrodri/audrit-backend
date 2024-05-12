@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 from jose import JWTError, jwt
 
@@ -14,7 +14,8 @@ JWT_EXPIRE_MINUTES = int(os.environ.get("JWT_EXPIRE_MINUTES"))
 
 async def crear_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    ya = datetime.utcnow()
+    # ya = datetime.utcnow()
+    ya = datetime.now(UTC)
 
     if expires_delta:
         expire = ya + expires_delta
