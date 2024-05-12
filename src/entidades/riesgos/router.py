@@ -35,7 +35,7 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    path="/revision/{revision_id}/buscarRiesgo/{texto_buscado}",
+    path="/revision/{revision_id}/buscar/{texto_buscado}",
     endpoint=RiesgosController.buscar,
     methods=["GET"],
     response_model=list[ResultadoBusquedaRiesgo],
