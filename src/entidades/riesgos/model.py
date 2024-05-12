@@ -1,10 +1,8 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
-from typing import Any
 from entidades.objetivos_control.model import ObjetivoControl
 from entidades.revisiones.model import Revision
-
-# from entidades.documentos.model import Documento
+from pydantic import PydanticUndefinedAnnotation
 
 
 class RiesgoBase(BaseModel):
@@ -21,11 +19,15 @@ class RiesgoCreacion(RiesgoBase):
 class RiesgoActualizacion(RiesgoCreacion): ...
 
 
+# if TYPE_CHECKING:
+from entidades.documentos.model import DocumentoDeRelevamiento
+
+
 class Riesgo(RiesgoBase, FromAttributes):
     id: int
     revision: Revision
     objetivos_control: list[ObjetivoControl] = []
-    documentos: list["Documento"] = []
+    documentos: list[DocumentoDeRelevamiento] = []
 
 
 class ResultadoBusquedaRiesgo(RiesgoBase):

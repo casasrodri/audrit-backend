@@ -1,8 +1,6 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
-from typing import Any
-from entidades.relevamientos.model import Relevamiento
-from entidades.riesgos.model import Riesgo
+from entidades.relevamientos.model import Relevamiento, RelevamientoId
 
 
 class DocumentoBase(BaseModel):
@@ -20,7 +18,15 @@ class DocumentoSoloContenido(DocumentoBase):
     id: int
 
 
+class DocumentoDeRelevamiento(BaseModel):
+    id: int
+    relevamiento: RelevamientoId
+
+
+from entidades.riesgos.model import ResultadoBusquedaRiesgo
+
+
 class Documento(DocumentoBase, FromAttributes):
     id: int
     relevamiento: Relevamiento
-    riesgos: list[Riesgo] = []
+    riesgos: list[ResultadoBusquedaRiesgo] = []

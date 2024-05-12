@@ -18,10 +18,19 @@ class RelevamientoCreacion(RelevamientoBase):
 class RelevamientoActualizacion(RelevamientoCreacion): ...
 
 
+class RelevamientoId(BaseModel):
+    id: int
+    nombre: str
+
+
+# from entidades.documentos.model import Documento
+
+
 class Relevamiento(RelevamientoBase, FromAttributes):
     id: int
     revision: Revision
     padre: Relevamiento | None
+    # documentos: list[Documento]
 
 
 class RelevamientoNodoData(RelevamientoBase):

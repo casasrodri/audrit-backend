@@ -6,6 +6,46 @@ from .model import (
     DocumentoCreacion,
     DocumentoActualizacion,
 )
+from json import loads
+from entidades.riesgos.controller import RiesgosController
+from entidades.riesgos.schema import RiesgoDB
+
+
+def buscar_objetos(
+    tipo: str, blocks: list, controlador: BaseController, db: SqlDB
+) -> list:
+    out = []
+    ids = {b["data"]["id"] for b in blocks if b["type"] == tipo}
+
+    for id in ids:
+        try:
+            out.append(controlador.get(db, id))
+        except:
+            ...
+
+    return out
+
+
+def asociar_riesgos(documento: DocumentoDB, blocks: list, db: SqlDB):
+    obj_asociados = buscar_objetos("riesgo", blocks, RiesgosController, db)
+
+    # Se incorporan asociaciones:
+    ries: RiesgoDB
+    for ries in obj_asociados:
+        if ries not in documento.riesgos:
+            documento.riesgos.append(ries)
+
+        if documento not in ries.documentos:
+            ries.documentos.append(documento)
+
+    # Se eliminan los que no están más:
+    eliminar = set(documento.riesgos) - set(obj_asociados)
+
+    for ries in eliminar:
+        if ries in documento.riesgos:
+            documento.riesgos.remove(ries)
+        if documento in ries.documentos:
+            ries.documentos.remove(documento)
 
 
 class DocumentosController(BaseController):
@@ -39,10 +79,16 @@ class DocumentosController(BaseController):
         return db_documento
 
     def update(db: SqlDB, id: int, documento: DocumentoActualizacion):
-        db_documento = DocumentosController.get(db, id)
+        db_documento: DocumentoDB = DocumentosController.get(db, id)
 
         db_documento.relevamiento_id = documento.relevamiento_id
         db_documento.contenido = documento.contenido
+
+        # Se analiza los elementos linkeados
+        blocks = loads(documento.contenido)["blocks"]
+
+        # Se generan las asociaciones
+        asociar_riesgos(db_documento, blocks, db)
 
         db.commit()
         db.refresh(db_documento)
