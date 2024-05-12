@@ -15,4 +15,4 @@ class AuditoriaDB(BaseSchema):
     periodo = Column(String, index=True)
 
     def __repr__(self):
-        return f"<AuditoriaDB {self.nombre}>"
+        return f"<AuditoriaDB:{self.id} {self.nombre}>"

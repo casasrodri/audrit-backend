@@ -28,4 +28,4 @@ class DocumentoDB(BaseSchema):
     )
 
     def __repr__(self):
-        return f"<DocumentoDB {self.relevamiento.nombre}>"
+        return f"<DocumentoDB:{self.id} {self.relevamiento.nombre}>"

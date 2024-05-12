@@ -32,4 +32,4 @@ class RiesgoDB(BaseSchema):
     )
 
     def __repr__(self):
-        return f"<RiesgoDB {self.nombre}>"
+        return f"<RiesgoDB:{self.id} {self.nombre}>"

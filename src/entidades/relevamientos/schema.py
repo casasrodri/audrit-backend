@@ -30,4 +30,4 @@ class RelevamientoDB(BaseSchema):
     )
 
     def __repr__(self):
-        return f"<RelevamientoDB {self.nombre}>"
+        return f"<RelevamientoDB:{self.id} {self.nombre}>"

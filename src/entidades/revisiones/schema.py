@@ -30,4 +30,4 @@ class RevisionDB(BaseSchema):
     )
 
     def __repr__(self):
-        return f"<RevisionDB {self.nombre}>"
+        return f"<RevisionDB:{self.id} {self.nombre}>"

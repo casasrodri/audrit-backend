@@ -23,4 +23,4 @@ class ObjetivoControlDB(BaseSchema):
     )
 
     def __repr__(self):
-        return f"<ObjetivoControlDB {self.nombre}>"
+        return f"<ObjetivoControlDB:{self.id} {self.nombre}>"
