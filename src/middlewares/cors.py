@@ -8,7 +8,8 @@ ORIGINS = [
     "http://localhost:4321",  # Astro.js
     "http://localhost:3000",  # Nuxt.js
     "http://192.168.1.3:5173",  # Galaxy
-    "*",  # Cualquier origen
+    "http://192.168.1.24:5173",  # Galaxy
+    # "*",  # Cualquier origen
 ]
 
 # ORIGINS = ["*"]
