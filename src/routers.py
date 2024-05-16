@@ -94,8 +94,8 @@ def set_routers(app):
 
     app.include_router(
         router=relaciones_router,
-        prefix="/api/v1/relaciones",
-        tags=["Relaciones"],
+        prefix="/api/v1/links",
+        tags=["Links"],
         #####
         # dependencies=[Depends(get_token_header)],
         # responses={418: {"description": "I'm a teapot"}},
