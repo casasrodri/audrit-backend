@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from .controller import ControlesController
+from relaciones.controller import LinksController
 from .model import Control, ResultadoBusquedaControl
 
 router = APIRouter()
@@ -55,3 +56,10 @@ router.add_api_route(
 #     methods=["DELETE"],
 #     response_model=Control,
 # )
+
+router.add_api_route(
+    path="/{control_id}/link/riesgo/{riesgo_id}",
+    endpoint=LinksController.asociar_control_riesgo,
+    methods=["POST"],
+    status_code=status.HTTP_201_CREATED,
+)

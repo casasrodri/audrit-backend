@@ -2,7 +2,11 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from database import BaseSchema
 from sqlalchemy.orm import mapped_column
-from relaciones.tablas import riesgos_objetivos_control, riesgos_documentos
+from relaciones.tablas import (
+    riesgos_objetivos_control,
+    riesgos_documentos,
+    controles_riesgos,
+)
 
 
 class RiesgoDB(BaseSchema):
@@ -28,6 +32,13 @@ class RiesgoDB(BaseSchema):
     documentos = relationship(
         "DocumentoDB",
         secondary=riesgos_documentos,
+        back_populates="riesgos",
+    )
+
+    # Relación muchos-a-muchos con Controles
+    controles = relationship(
+        "ControlDB",
+        secondary=controles_riesgos,
         back_populates="riesgos",
     )
 

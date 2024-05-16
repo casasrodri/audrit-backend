@@ -7,6 +7,7 @@ from entidades.objetivos_control.router import router as objetivos_control_route
 from entidades.riesgos.router import router as riesgos_router
 from entidades.controles.router import router as controles_router
 from entidades.pruebas.router import router as pruebas_router
+from relaciones.router import router as relaciones_router
 
 
 def set_routers(app):
@@ -86,6 +87,15 @@ def set_routers(app):
         router=pruebas_router,
         prefix="/api/v1/pruebas",
         tags=["Pruebas"],
+        #####
+        # dependencies=[Depends(get_token_header)],
+        # responses={418: {"description": "I'm a teapot"}},
+    )
+
+    app.include_router(
+        router=relaciones_router,
+        prefix="/api/v1/relaciones",
+        tags=["Relaciones"],
         #####
         # dependencies=[Depends(get_token_header)],
         # responses={418: {"description": "I'm a teapot"}},

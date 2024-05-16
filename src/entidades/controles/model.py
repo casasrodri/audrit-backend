@@ -12,6 +12,12 @@ class ControlBase(BaseModel):
     automatizacion: str
 
 
+class ControlResumido(BaseModel):
+    id: int
+    nombre: str
+    descripcion: str
+
+
 class ControlCreacion(ControlBase):
     revision_id: int
 
@@ -21,12 +27,14 @@ class ControlActualizacion(ControlCreacion): ...
 
 # if TYPE_CHECKING:
 from entidades.documentos.model import DocumentoDeRelevamiento
+from entidades.riesgos.model import RiesgoResumido
 
 
 class Control(ControlBase, FromAttributes):
     id: int
     revision: Revision
     documentos: list[DocumentoDeRelevamiento] = []
+    riesgos: list[RiesgoResumido] = []
 
 
 class ResultadoBusquedaControl(ControlBase):
