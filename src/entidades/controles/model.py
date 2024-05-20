@@ -1,6 +1,7 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
 from entidades.revisiones.model import Revision
+from entidades.links.model import ElementoLinkeado
 
 
 class ControlBase(BaseModel):
@@ -33,8 +34,7 @@ from entidades.riesgos.model import RiesgoResumido
 class Control(ControlBase, FromAttributes):
     id: int
     revision: Revision
-    documentos: list[DocumentoDeRelevamiento] = []
-    riesgos: list[RiesgoResumido] = []
+    links: list[ElementoLinkeado] = []
 
 
 class ResultadoBusquedaControl(ControlBase):

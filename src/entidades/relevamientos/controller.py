@@ -11,18 +11,20 @@ from .model import (
 
 
 class RelevamientosController(BaseController):
-    def get_all(db: SqlDB):
+    async def get_all(db: SqlDB):
         return db.query(RelevamientoDB).all()
 
-    def get_all_by_revision(db: SqlDB, revision_id: int):
+    async def get_all_by_revision(db: SqlDB, revision_id: int):
         return (
             db.query(RelevamientoDB)
             .filter(RelevamientoDB.revision_id == revision_id)
             .all()
         )
 
-    def get_nodos_by_revision(db: SqlDB, revision_id: int):
-        relevamientos = RelevamientosController.get_all_by_revision(db, revision_id)
+    async def get_nodos_by_revision(db: SqlDB, revision_id: int):
+        relevamientos = await RelevamientosController.get_all_by_revision(
+            db, revision_id
+        )
 
         def crear_nodo(relevamiento):
             data = RelevamientoNodoData(
@@ -53,7 +55,7 @@ class RelevamientosController(BaseController):
         out = [nodo for nodo in nodos.values() if nodo.data.padre is None]
         return out
 
-    def create(db: SqlDB, relevamiento: RelevamientoCreacion):
+    async def create(db: SqlDB, relevamiento: RelevamientoCreacion):
         db_relevamiento = RelevamientoDB(
             sigla=relevamiento.sigla,
             nombre=relevamiento.nombre,
@@ -67,8 +69,8 @@ class RelevamientosController(BaseController):
 
         return db_relevamiento
 
-    def update(db: SqlDB, id: int, relevamiento: RelevamientoActualizacion):
-        db_relevamiento = RelevamientosController.get(db, id)
+    async def update(db: SqlDB, id: int, relevamiento: RelevamientoActualizacion):
+        db_relevamiento = await RelevamientosController.get(db, id)
 
         db_relevamiento.sigla = relevamiento.sigla
         db_relevamiento.nombre = relevamiento.nombre
@@ -80,16 +82,24 @@ class RelevamientosController(BaseController):
 
         return db_relevamiento
 
-    def get(db: SqlDB, id: int):
+    async def get(db: SqlDB, id: int, links: bool = True):
         relevamiento = db.query(RelevamientoDB).get(id)
 
         if relevamiento is None:
             raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
 
+        # Obtención de links
+        if links:
+            from entidades.links.controller import LinksController, EntidadLinkeable
+
+            relevamiento.links = await LinksController.get(
+                db, EntidadLinkeable.relevamiento, id
+            )
+
         return relevamiento
 
-    def delete(db: SqlDB, id: int):
-        db_relevamiento = RelevamientosController.get(db, id)
+    async def delete(db: SqlDB, id: int):
+        db_relevamiento = await RelevamientosController.get(db, id)
         print("Objeto encontrado: ", db_relevamiento)
 
         db.delete(db_relevamiento)

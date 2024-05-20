@@ -2,6 +2,7 @@ from __future__ import annotations
 from models import BaseModel, FromAttributes
 from typing import Any
 from entidades.revisiones.model import Revision
+from entidades.links.model import ElementoLinkeado
 
 
 class RelevamientoBase(BaseModel):
@@ -30,7 +31,7 @@ class Relevamiento(RelevamientoBase, FromAttributes):
     id: int
     revision: Revision
     padre: Relevamiento | None
-    # documentos: list[Documento]
+    links: list[ElementoLinkeado] = []
 
 
 class RelevamientoNodoData(RelevamientoBase):

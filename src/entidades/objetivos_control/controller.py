@@ -21,12 +21,20 @@ class ObjetivosControlController(BaseController):
 
         return db_objetivo
 
-    def get(db: SqlDB, id: int):
+    async def get(db: SqlDB, id: int, links: bool = False):
         objetivo = db.query(ObjetivoControlDB).get(id)
 
         if objetivo is None:
             raise HTTPException(
                 status_code=404, detail="Objetivo de control no encontrado"
+            )
+
+        # Obtención de links
+        if links:
+            from entidades.links.controller import LinksController, EntidadLinkeable
+
+            objetivo.links = await LinksController.get(
+                db, EntidadLinkeable.objetivo_control, id
             )
 
         return objetivo

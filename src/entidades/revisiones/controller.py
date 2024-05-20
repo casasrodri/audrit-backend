@@ -11,17 +11,17 @@ from .model import (
 
 
 class RevisionesController(BaseController):
-    def get_all(db: SqlDB):
+    async def get_all(db: SqlDB):
         return db.query(RevisionDB).all()
 
-    def get_all_auditoria(db: SqlDB, auditoria_id: int):
+    async def get_all_auditoria(db: SqlDB, auditoria_id: int):
         revisiones = (
             db.query(RevisionDB).filter(RevisionDB.auditoria_id == auditoria_id).all()
         )
 
         return revisiones
 
-    def get_nodos(db: SqlDB, auditoria_id: int):
+    async def get_nodos(db: SqlDB, auditoria_id: int):
         revisiones = RevisionesController.get_all_auditoria(db, auditoria_id)
 
         def crear_nodo(revision):
@@ -52,7 +52,7 @@ class RevisionesController(BaseController):
         out = [nodo for nodo in nodos.values() if nodo.data.padre is None]
         return out
 
-    def create(db: SqlDB, revision: RevisionCreacion):
+    async def create(db: SqlDB, revision: RevisionCreacion):
         db_revision = RevisionDB(
             sigla=revision.sigla,
             nombre=revision.nombre,
@@ -66,8 +66,8 @@ class RevisionesController(BaseController):
 
         return db_revision
 
-    def update(db: SqlDB, id: int, revision: RevisionActualizacion):
-        db_revision = RevisionesController.get(db, id)
+    async def update(db: SqlDB, id: int, revision: RevisionActualizacion):
+        db_revision = await RevisionesController.get(db, id)
 
         db_revision.sigla = revision.sigla
         db_revision.nombre = revision.nombre
@@ -79,7 +79,7 @@ class RevisionesController(BaseController):
 
         return db_revision
 
-    def get(db: SqlDB, id: int):
+    async def get(db: SqlDB, id: int):
         revision = db.query(RevisionDB).get(id)
 
         if revision is None:
@@ -89,7 +89,7 @@ class RevisionesController(BaseController):
 
         return revision
 
-    def delete(db: SqlDB, id: int):
+    async def delete(db: SqlDB, id: int):
         db_revision = RevisionesController.get(db, id)
 
         print("Objeto encontrado: ", db_revision)

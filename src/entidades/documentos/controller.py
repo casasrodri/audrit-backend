@@ -7,13 +7,10 @@ from .model import (
     DocumentoActualizacion,
 )
 from json import loads
-from entidades.riesgos.controller import RiesgosController
-from entidades.riesgos.schema import RiesgoDB
-from entidades.controles.controller import ControlesController
-from entidades.controles.schema import ControlDB
+from entidades.links.controller import LinksController, EntidadLinkeable, CONTROLLERS
 
 
-def buscar_objetos(
+async def buscar_objetos(
     tipo: str, blocks: list, controlador: BaseController, db: SqlDB
 ) -> list:
     out = []
@@ -21,62 +18,30 @@ def buscar_objetos(
 
     for id in ids:
         try:
-            out.append(controlador.get(db, id))
+            out.append(await controlador.get(db, id))
         except:
             ...
 
     return out
 
 
-def asociar_riesgos(documento: DocumentoDB, blocks: list, db: SqlDB):
-    obj_asociados = buscar_objetos("riesgo", blocks, RiesgosController, db)
+async def asociar(
+    tipo: EntidadLinkeable, documento: DocumentoDB, blocks: list, db: SqlDB
+):
+    controller = CONTROLLERS[tipo]
+    obj_asociados = await buscar_objetos(tipo.name, blocks, controller, db)
 
-    # Se incorporan asociaciones:
-    ries: RiesgoDB
-    for ries in obj_asociados:
-        if ries not in documento.riesgos:
-            documento.riesgos.append(ries)
-
-        if documento not in ries.documentos:
-            ries.documentos.append(documento)
-
-    # Se eliminan los que no están más:
-    eliminar = set(documento.riesgos) - set(obj_asociados)
-
-    for ries in eliminar:
-        if ries in documento.riesgos:
-            documento.riesgos.remove(ries)
-        if documento in ries.documentos:
-            ries.documentos.remove(documento)
-
-
-def asociar_controles(documento: DocumentoDB, blocks: list, db: SqlDB):
-    obj_asociados = buscar_objetos("control", blocks, ControlesController, db)
-
-    # Se incorporan asociaciones:
-    ctrl: ControlDB
-    for ctrl in obj_asociados:
-        if ctrl not in documento.controles:
-            documento.controles.append(ctrl)
-
-        if documento not in ctrl.documentos:
-            ctrl.documentos.append(documento)
-
-    # Se eliminan los que no están más:
-    eliminar = set(documento.controles) - set(obj_asociados)
-
-    for ctrl in eliminar:
-        if ctrl in documento.controles:
-            documento.controles.remove(ctrl)
-        if documento in ctrl.documentos:
-            ctrl.documentos.remove(documento)
+    for obj in obj_asociados:
+        await LinksController.create(
+            db, EntidadLinkeable.relevamiento, documento.relevamiento_id, tipo, obj.id
+        )
 
 
 class DocumentosController(BaseController):
-    def get_all(db: SqlDB):
+    async def get_all(db: SqlDB) -> list[DocumentoDB]:
         return db.query(DocumentoDB).all()
 
-    def get_by_relevamiento(db: SqlDB, relevamiento_id: int):
+    async def get_by_relevamiento(db: SqlDB, relevamiento_id: int) -> list[DocumentoDB]:
         documento = (
             db.query(DocumentoDB)
             .filter(DocumentoDB.relevamiento_id == relevamiento_id)
@@ -90,7 +55,7 @@ class DocumentosController(BaseController):
 
         return documento
 
-    def create(db: SqlDB, documento: DocumentoCreacion):
+    async def create(db: SqlDB, documento: DocumentoCreacion) -> DocumentoDB:
         db_documento = DocumentoDB(
             relevamiento_id=documento.relevamiento_id,
             contenido=documento.contenido,
@@ -102,25 +67,32 @@ class DocumentosController(BaseController):
 
         return db_documento
 
-    def update(db: SqlDB, id: int, documento: DocumentoActualizacion):
-        db_documento: DocumentoDB = DocumentosController.get(db, id)
+    async def update(
+        db: SqlDB, id: int, documento: DocumentoActualizacion
+    ) -> DocumentoDB:
+        db_documento = await DocumentosController.get(db, id)
 
-        db_documento.relevamiento_id = documento.relevamiento_id
         db_documento.contenido = documento.contenido
 
         # Se analiza los elementos linkeados
         blocks = loads(documento.contenido)["blocks"]
 
-        # Se generan las asociaciones
-        asociar_riesgos(db_documento, blocks, db)
-        asociar_controles(db_documento, blocks, db)
+        # Se eliminan las asociaciones anteriores
+        await LinksController.delete_all_links(db, db_documento.relevamiento_id)
+
+        # Se generan las asociaciones nuevamente
+        await asociar(EntidadLinkeable.riesgo, db_documento, blocks, db)
+        await asociar(EntidadLinkeable.control, db_documento, blocks, db)
+        # await asociar(EntidadLinkeable.normativa, db_documento, blocks, db)
+        # await asociar(EntidadLinkeable.organigrama, db_documento, blocks, db)
+        # await asociar(EntidadLinkeable.aplicacion, db_documento, blocks, db)
 
         db.commit()
         db.refresh(db_documento)
 
         return db_documento
 
-    def get(db: SqlDB, id: int):
+    async def get(db: SqlDB, id: int, links: bool = True) -> DocumentoDB:
         documento = db.query(DocumentoDB).filter(DocumentoDB.id == id).first()
 
         if documento is None:
@@ -128,9 +100,16 @@ class DocumentosController(BaseController):
                 status_code=status.HTTP_404_NOT_FOUND, detail="Documento no encontrado"
             )
 
+        if links:
+            from entidades.links.controller import LinksController, EntidadLinkeable
+
+            documento.links = await LinksController.get(
+                db, EntidadLinkeable.relevamiento, documento.relevamiento_id
+            )
+
         return documento
 
-    def delete(db: SqlDB, id: int):
+    async def delete(db: SqlDB, id: int) -> DocumentoDB:
         db_documento = DocumentosController.get(db, id)
 
         print("Objeto encontrado: ", db_documento)

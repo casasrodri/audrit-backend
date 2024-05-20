@@ -7,21 +7,21 @@ from entidades.revisiones.controller import RevisionesController
 
 
 class PruebasController(BaseController):
-    def get_all(db: SqlDB):
+    async def get_all(db: SqlDB):
         return db.query(PruebaDB).all()
 
-    def get_all_by_revision(db: SqlDB, revision_id: int):
+    async def get_all_by_revision(db: SqlDB, revision_id: int):
         return db.query(PruebaDB).filter(PruebaDB.revision_id == revision_id).all()
 
-    def create(db: SqlDB, control: PruebaCreacion):
-        revision = RevisionesController.get(db, control.revision_id)
+    async def create(db: SqlDB, prueba: PruebaCreacion):
+        revision = await RevisionesController.get(db, prueba.revision_id)
 
         db_prueba = PruebaDB()
         db_prueba = PruebaDB(
-            nombre=control.nombre,
-            descripcion=control.descripcion,
-            sector=control.sector,
-            informe=control.informe,
+            nombre=prueba.nombre,
+            descripcion=prueba.descripcion,
+            sector=prueba.sector,
+            informe=prueba.informe,
             revision=revision,
         )
 
@@ -31,31 +31,37 @@ class PruebasController(BaseController):
 
         return db_prueba
 
-    def update(db: SqlDB, id: int, control: PruebaActualizacion):
-        db_prueba = PruebasController.get(db, id)
+    async def update(db: SqlDB, id: int, prueba: PruebaActualizacion):
+        db_prueba = await PruebasController.get(db, id)
 
-        db_prueba.nombre = control.nombre
-        db_prueba.descripcion = control.descripcion
-        db_prueba.sector = control.sector
-        db_prueba.informe = control.informe
+        db_prueba.nombre = prueba.nombre
+        db_prueba.descripcion = prueba.descripcion
+        db_prueba.sector = prueba.sector
+        db_prueba.informe = prueba.informe
 
         db.commit()
         db.refresh(db_prueba)
 
         return db_prueba
 
-    def get(db: SqlDB, id: int):
-        control = db.query(PruebaDB).get(id)
+    async def get(db: SqlDB, id: int, links: bool = True):
+        prueba = db.query(PruebaDB).get(id)
 
-        if control is None:
+        if prueba is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Prueba de auditoría no encontrada.",
             )
 
-        return control
+        # Obtención de links
+        if links:
+            from entidades.links.controller import LinksController, EntidadLinkeable
 
-    def buscar(db: SqlDB, revision_id: int, texto_buscado: str):
+            prueba.links = await LinksController.get(db, EntidadLinkeable.prueba, id)
+
+        return prueba
+
+    async def buscar(db: SqlDB, revision_id: int, texto_buscado: str):
         return (
             db.query(PruebaDB)
             .filter(PruebaDB.revision_id == revision_id)
@@ -68,7 +74,7 @@ class PruebasController(BaseController):
             .all()
         )
 
-    # def delete(db: SqlDB, id: int):
+    # async def delete(db: SqlDB, id: int):
     #     control = ControlRepo(db).delete(id)
 
     #     if control is None:

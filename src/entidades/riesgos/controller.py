@@ -8,15 +8,19 @@ from entidades.objetivos_control.controller import ObjetivosControlController
 
 
 class RiesgosController(BaseController):
-    def get_all(db: SqlDB):
+    async def get_all(db: SqlDB):
         return db.query(RiesgoDB).all()
 
-    def get_all_by_revision(db: SqlDB, revision_id: int):
+    async def get_all_by_revision(db: SqlDB, revision_id: int):
         return db.query(RiesgoDB).filter(RiesgoDB.revision_id == revision_id).all()
 
-    def create(db: SqlDB, riesgo: RiesgoCreacion):
-        # revision = db.query(RevisionDB).get(riesgo.revision_id)
+    async def create(db: SqlDB, riesgo: RiesgoCreacion):
         revision = RevisionesController.get(db, riesgo.revision_id)
+        print("riesgo recibido:", riesgo)
+        print(
+            f"♯4c1d7d → ({revision.__class__.__module__}.{revision.__class__.__name__}) revision =",
+            revision,
+        )
 
         db_riesgo = RiesgoDB(
             nombre=riesgo.nombre,
@@ -25,37 +29,57 @@ class RiesgosController(BaseController):
             revision=revision,
         )
 
-        db_riesgo.objetivos_control = [
-            # db.query(ObjetivoControlDB).get(objetivo_id)
-            ObjetivosControlController.get(db, objetivo_id)
-            for objetivo_id in riesgo.objetivos_control
-        ]
-
         db.add(db_riesgo)
         db.commit()
         db.refresh(db_riesgo)
 
+        from entidades.links.controller import (
+            LinksController,
+            EntidadLinkeable,
+        )
+
+        for oc in riesgo.objetivos_control:
+            await LinksController.create(
+                db,
+                EntidadLinkeable.riesgo,
+                db_riesgo.id,
+                EntidadLinkeable.objetivo_control,
+                oc,
+            )
+
         return db_riesgo
 
-    def update(db: SqlDB, id: int, riesgo: RiesgoActualizacion):
-        db_riesgo = RiesgosController.get(db, id)
+    async def update(db: SqlDB, id: int, riesgo: RiesgoActualizacion):
+        db_riesgo = await RiesgosController.get(db, id)
 
         db_riesgo.nombre = riesgo.nombre
         db_riesgo.descripcion = riesgo.descripcion
         db_riesgo.nivel = riesgo.nivel
 
-        db_riesgo.objetivos_control = [
-            # db.query(ObjetivoControlDB).get(objetivo_id)
-            ObjetivosControlController.get(db, objetivo_id)
-            for objetivo_id in riesgo.objetivos_control
-        ]
+        from entidades.links.controller import (
+            LinksController,
+            EntidadLinkeable,
+        )
+
+        # Se eliminan los links de objetivos de control
+        links = await LinksController.delete_all_objetivos_control(db, id)
+
+        # Se crean nuevamente todas las asociaciones
+        for oc in riesgo.objetivos_control:
+            await LinksController.create(
+                db,
+                EntidadLinkeable.riesgo,
+                id,
+                EntidadLinkeable.objetivo_control,
+                oc,
+            )
 
         db.commit()
         db.refresh(db_riesgo)
 
         return db_riesgo
 
-    def get(db: SqlDB, id: int):
+    async def get(db: SqlDB, id: int, links: bool = True):
         riesgo = db.query(RiesgoDB).get(id)
 
         if riesgo is None:
@@ -63,9 +87,15 @@ class RiesgosController(BaseController):
                 status_code=status.HTTP_404_NOT_FOUND, detail="Riesgo no encontrado"
             )
 
+        # Obtención de links
+        if links:
+            from entidades.links.controller import LinksController, EntidadLinkeable
+
+            riesgo.links = await LinksController.get(db, EntidadLinkeable.riesgo, id)
+
         return riesgo
 
-    def buscar(db: SqlDB, revision_id: int, texto_buscado: str):
+    async def buscar(db: SqlDB, revision_id: int, texto_buscado: str):
         return (
             db.query(RiesgoDB)
             .filter(RiesgoDB.revision_id == revision_id)

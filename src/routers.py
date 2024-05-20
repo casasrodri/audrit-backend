@@ -7,7 +7,7 @@ from entidades.objetivos_control.router import router as objetivos_control_route
 from entidades.riesgos.router import router as riesgos_router
 from entidades.controles.router import router as controles_router
 from entidades.pruebas.router import router as pruebas_router
-from relaciones.router import router as relaciones_router
+from entidades.links.router import router as relaciones_router
 
 
 def set_routers(app):

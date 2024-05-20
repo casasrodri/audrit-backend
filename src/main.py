@@ -36,7 +36,7 @@ from entidades.documentos.model import Documento
 
 @app.get("/riesgo/{id}")
 async def test(db: SqlDB, id: int = 5) -> Riesgo:
-    return RiesgosController.get(db, id)
+    return await RiesgosController.get(db, id)
 
 
 @app.get("/documento/{id}")

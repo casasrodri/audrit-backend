@@ -29,4 +29,4 @@ from entidades.riesgos.model import ResultadoBusquedaRiesgo
 class Documento(DocumentoBase, FromAttributes):
     id: int
     relevamiento: Relevamiento
-    riesgos: list[ResultadoBusquedaRiesgo] = []
+    # riesgos: list[ResultadoBusquedaRiesgo] = []

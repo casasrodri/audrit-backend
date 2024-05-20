@@ -2,11 +2,12 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from database import BaseSchema
 from sqlalchemy.orm import mapped_column
-from relaciones.tablas import (
-    riesgos_objetivos_control,
-    riesgos_documentos,
-    controles_riesgos,
-)
+
+# from relaciones.tablas import (
+#     riesgos_objetivos_control,
+#     riesgos_documentos,
+#     controles_riesgos,
+# )
 
 
 class RiesgoDB(BaseSchema):
@@ -22,25 +23,25 @@ class RiesgoDB(BaseSchema):
     revision = relationship("RevisionDB", back_populates="riesgos")
 
     # Relación muchos-a-muchos con ObjetivoControl
-    objetivos_control = relationship(
-        "ObjetivoControlDB",
-        secondary=riesgos_objetivos_control,
-        back_populates="riesgos",
-    )
+    # objetivos_control = relationship(
+    #     "ObjetivoControlDB",
+    #     secondary=riesgos_objetivos_control,
+    #     back_populates="riesgos",
+    # )
 
     # Relación muchos-a-muchos con Documentos
-    documentos = relationship(
-        "DocumentoDB",
-        secondary=riesgos_documentos,
-        back_populates="riesgos",
-    )
+    # documentos = relationship(
+    #     "DocumentoDB",
+    #     secondary=riesgos_documentos,
+    #     back_populates="riesgos",
+    # )
 
     # Relación muchos-a-muchos con Controles
-    controles = relationship(
-        "ControlDB",
-        secondary=controles_riesgos,
-        back_populates="riesgos",
-    )
+    # controles = relationship(
+    #     "ControlDB",
+    #     secondary=controles_riesgos,
+    #     back_populates="riesgos",
+    # )
 
     def __repr__(self):
         return f"<RiesgoDB:{self.id} {self.nombre}>"

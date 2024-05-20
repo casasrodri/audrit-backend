@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from database import BaseSchema
-from relaciones.tablas import controles_documentos, controles_riesgos
+
+# from relaciones.tablas import controles_documentos, controles_riesgos
 
 
 class ControlDB(BaseSchema):
@@ -20,18 +21,18 @@ class ControlDB(BaseSchema):
     revision = relationship("RevisionDB", back_populates="controles")
 
     # Relación muchos-a-muchos con Documentos
-    documentos = relationship(
-        "DocumentoDB",
-        secondary=controles_documentos,
-        back_populates="controles",
-    )
+    # documentos = relationship(
+    #     "DocumentoDB",
+    #     secondary=controles_documentos,
+    #     back_populates="controles",
+    # )
 
     # Relación muchos-a-muchos con Riesgos
-    riesgos = relationship(
-        "RiesgoDB",
-        secondary=controles_riesgos,
-        back_populates="controles",
-    )
+    # riesgos = relationship(
+    #     "RiesgoDB",
+    #     secondary=controles_riesgos,
+    #     back_populates="controles",
+    # )
 
     def __repr__(self):
         return f"<ControlDB:{self.id} {self.nombre}>"

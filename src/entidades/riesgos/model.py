@@ -1,7 +1,7 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
-from entidades.objetivos_control.model import ObjetivoControl
 from entidades.revisiones.model import Revision
+from entidades.links.model import ElementoLinkeado
 
 
 class RiesgoBase(BaseModel):
@@ -30,9 +30,7 @@ from entidades.controles.model import ControlResumido
 class Riesgo(RiesgoBase, FromAttributes):
     id: int
     revision: Revision
-    objetivos_control: list[ObjetivoControl] = []
-    documentos: list[DocumentoDeRelevamiento] = []
-    controles: list[ControlResumido] = []
+    links: list[ElementoLinkeado] = []
 
 
 class ResultadoBusquedaRiesgo(RiesgoBase):

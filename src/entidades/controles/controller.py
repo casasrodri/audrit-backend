@@ -7,14 +7,14 @@ from entidades.revisiones.controller import RevisionesController
 
 
 class ControlesController(BaseController):
-    def get_all(db: SqlDB):
+    async def get_all(db: SqlDB):
         return db.query(ControlDB).all()
 
-    def get_all_by_revision(db: SqlDB, revision_id: int):
+    async def get_all_by_revision(db: SqlDB, revision_id: int):
         return db.query(ControlDB).filter(ControlDB.revision_id == revision_id).all()
 
-    def create(db: SqlDB, control: ControlCreacion):
-        revision = RevisionesController.get(db, control.revision_id)
+    async def create(db: SqlDB, control: ControlCreacion):
+        revision = await RevisionesController.get(db, control.revision_id)
 
         db_control = ControlDB(
             nombre=control.nombre,
@@ -32,8 +32,8 @@ class ControlesController(BaseController):
 
         return db_control
 
-    def update(db: SqlDB, id: int, control: ControlActualizacion):
-        db_control = ControlesController.get(db, id)
+    async def update(db: SqlDB, id: int, control: ControlActualizacion):
+        db_control = await ControlesController.get(db, id)
 
         db_control.nombre = control.nombre
         db_control.descripcion = control.descripcion
@@ -47,7 +47,7 @@ class ControlesController(BaseController):
 
         return db_control
 
-    def get(db: SqlDB, id: int):
+    async def get(db: SqlDB, id: int, links: bool = True) -> ControlDB:
         control = db.query(ControlDB).get(id)
 
         if control is None:
@@ -55,9 +55,15 @@ class ControlesController(BaseController):
                 status_code=status.HTTP_404_NOT_FOUND, detail="Control no encontrado"
             )
 
+        # Obtención de links
+        if links:
+            from entidades.links.controller import LinksController, EntidadLinkeable
+
+            control.links = await LinksController.get(db, EntidadLinkeable.control, id)
+
         return control
 
-    def buscar(db: SqlDB, revision_id: int, texto_buscado: str):
+    async def buscar(db: SqlDB, revision_id: int, texto_buscado: str):
         return (
             db.query(ControlDB)
             .filter(ControlDB.revision_id == revision_id)
@@ -69,7 +75,7 @@ class ControlesController(BaseController):
             .all()
         )
 
-    # def delete(db: SqlDB, id: int):
+    # async def delete(db: SqlDB, id: int):
     #     control = ControlRepo(db).delete(id)
 
     #     if control is None:
