@@ -26,23 +26,5 @@ async def home():
     return {"PID": os.getpid()}
 
 
-from database import SqlDB
-from entidades.riesgos.controller import RiesgosController
-from entidades.riesgos.model import Riesgo
-
-from entidades.documentos.controller import DocumentosController
-from entidades.documentos.model import Documento
-
-
-@app.get("/riesgo/{id}")
-async def test(db: SqlDB, id: int = 5) -> Riesgo:
-    return await RiesgosController.get(db, id)
-
-
-@app.get("/documento/{id}")
-async def test(db: SqlDB, id: int = 0) -> Documento:
-    return DocumentosController.get(db, id)
-
-
 set_routers(app)
 init_db()

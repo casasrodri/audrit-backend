@@ -1,8 +1,6 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
-from ..auditorias.model import Auditoria
-from typing import Any
-from pydantic import root_validator
+from entidades.auditorias.model import Auditoria
 
 
 class RevisionBase(BaseModel):

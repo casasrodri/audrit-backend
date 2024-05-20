@@ -4,7 +4,6 @@ from database import SqlDB
 from .model import RiesgoCreacion, RiesgoActualizacion
 from .schema import RiesgoDB
 from entidades.revisiones.controller import RevisionesController
-from entidades.objetivos_control.controller import ObjetivosControlController
 
 
 class RiesgosController(BaseController):

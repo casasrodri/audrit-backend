@@ -1,7 +1,5 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
-from typing import Any
-from entidades.revisiones.model import Revision
 
 
 class ObjetivoControlBase(BaseModel):
