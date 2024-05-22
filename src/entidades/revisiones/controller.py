@@ -22,7 +22,7 @@ class RevisionesController(BaseController):
         return revisiones
 
     async def get_nodos(db: SqlDB, auditoria_id: int):
-        revisiones = RevisionesController.get_all_auditoria(db, auditoria_id)
+        revisiones = await RevisionesController.get_all_auditoria(db, auditoria_id)
 
         def crear_nodo(revision):
             data = RevisionNodoData(
