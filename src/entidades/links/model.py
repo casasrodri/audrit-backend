@@ -11,6 +11,7 @@ class EntidadLinkeable(str, Enum):
     prueba = "prueba"
     relevamiento = "relevamiento"
     riesgo = "riesgo"
+    observacion = "observacion"
 
 
 class ElementoLinkeado(BaseModel, FromAttributes):

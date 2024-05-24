@@ -13,6 +13,7 @@ from entidades.riesgos.controller import RiesgosController
 from entidades.objetivos_control.controller import ObjetivosControlController
 from entidades.pruebas.controller import PruebasController
 from entidades.relevamientos.controller import RelevamientosController
+from entidades.observaciones.controller import ObservacionesController
 
 
 class RelacionExistente(HTTPException): ...
@@ -24,6 +25,7 @@ CONTROLLERS = {
     "objetivo_control": ObjetivosControlController,
     "control": ControlesController,
     "prueba": PruebasController,
+    "observacion": ObservacionesController,
     "normativa": None,
     "aplicacion": None,
     "organigrama": None,
@@ -48,6 +50,12 @@ LINKS_VALIDOS = [
     (EntidadLinkeable.prueba, EntidadLinkeable.normativa),
     (EntidadLinkeable.prueba, EntidadLinkeable.aplicacion),
     (EntidadLinkeable.prueba, EntidadLinkeable.organigrama),
+    (EntidadLinkeable.observacion, EntidadLinkeable.riesgo),
+    (EntidadLinkeable.observacion, EntidadLinkeable.control),
+    (EntidadLinkeable.observacion, EntidadLinkeable.prueba),
+    (EntidadLinkeable.observacion, EntidadLinkeable.normativa),
+    (EntidadLinkeable.observacion, EntidadLinkeable.aplicacion),
+    (EntidadLinkeable.observacion, EntidadLinkeable.aplicacion),
     # Ejemplo prohibido: Relevamiento | Prueba
 ]
 
@@ -57,6 +65,7 @@ class AbreviaturasEntidades(Enum):
     control = "ctr"
     normativa = "nor"
     objetivo_control = "oct"
+    observacion = "obs"
     organigrama = "org"
     prueba = "pru"
     relevamiento = "rel"

@@ -14,7 +14,7 @@ class RiesgosController(BaseController):
         return db.query(RiesgoDB).filter(RiesgoDB.revision_id == revision_id).all()
 
     async def create(db: SqlDB, riesgo: RiesgoCreacion):
-        revision = RevisionesController.get(db, riesgo.revision_id)
+        revision = await RevisionesController.get(db, riesgo.revision_id)
         print("riesgo recibido:", riesgo)
         print(
             f"♯4c1d7d → ({revision.__class__.__module__}.{revision.__class__.__name__}) revision =",
