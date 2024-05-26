@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Table, ForeignKey
 from database import BaseSchema
 
 
@@ -13,3 +13,19 @@ class LinkDB(BaseSchema):
 
     def __repr__(self):
         return f"<{self.__class__.__name__}:{self.id}>"
+
+
+# archivos_pedidos = Table(
+#     "archivos_pedidos",
+#     BaseSchema.metadata,
+#     Column(
+#         "pedido_id", Integer, ForeignKey("pedidos.id"), primary_key=True
+#     ),
+#     Column(
+#         "archivo_id",
+#         Integer,
+#         ForeignKey("archivos.id"),
+#         primary_key=True,
+#     ),
+#     extend_existing=True,
+# )
