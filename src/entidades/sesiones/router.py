@@ -3,8 +3,9 @@ from fastapi.responses import Response
 from middlewares.autenticacion import EsteUsuario
 from utils.jwt import crear_token, JWT_EXPIRE_MINUTES
 from utils.logger import logger
-from entidades.usuarios.controller import validar_credenciales
+from entidades.usuarios.controller import UsuariosController
 from entidades.usuarios.model import UsuarioLogin, UsuarioOut
+from database import SqlDB
 
 router = APIRouter()
 
@@ -27,10 +28,13 @@ COOKIES_KWARGS = {
 
 
 @router.post("/jwt")
-async def login(credenciales: UsuarioLogin, response: Response):
+async def login(db: SqlDB, credenciales: UsuarioLogin, response: Response):
+
     # 1. Verifico que los datos sean correctos
     try:
-        await validar_credenciales(credenciales.email, credenciales.password)
+        await UsuariosController.validar_credenciales(
+            db, credenciales.email, credenciales.password
+        )
     except Exception as e:
         logger.error(f"Error al validar credenciales: {e}")
         raise CredencialesException()
@@ -41,7 +45,6 @@ async def login(credenciales: UsuarioLogin, response: Response):
 
     # 3. Guardo el token de acceso en una cookie
     response.set_cookie(key="jwt", value=access_token, **COOKIES_KWARGS)
-    # response.set_cookie(key="nombre", value="Rodriii 2.1", **COOKIES_KWARGS)
     response.set_cookie(
         key="nombre",
         value="Rodri",
