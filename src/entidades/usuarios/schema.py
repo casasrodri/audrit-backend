@@ -34,5 +34,23 @@ class UsuarioDB(BaseSchema):
     rol_id = Column(Integer, ForeignKey("roles_usuarios.id"))
     rol = relationship("RolUsuarioDB", back_populates="usuarios")
 
+    # Relación uno-a-muchos con PedidoDB
+    pedidos_creados = relationship(
+        "PedidoDB",
+        foreign_keys="PedidoDB.creador_id",
+        back_populates="creador",
+    )
+    pedidos_asignados = relationship(
+        "PedidoDB",
+        foreign_keys="PedidoDB.destinatario_id",
+        back_populates="destinatario",
+    )
+
+    # Relación uno-a-muchos con ComentariosPedidosDB
+    comentarios_pedidos = relationship(
+        "ComentariosPedidosDB",
+        back_populates="usuario",
+    )
+
     def __repr__(self):
         return f"<{self.__class__.__name__}:{self.id} {self.nombre} {self.apellido}>"

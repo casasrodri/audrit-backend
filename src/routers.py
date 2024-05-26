@@ -10,6 +10,8 @@ from entidades.controles.router import router as controles_router
 from entidades.pruebas.router import router as pruebas_router
 from entidades.links.router import router as relaciones_router
 from entidades.observaciones.router import router as observaciones_router
+from entidades.pedidos.router import router as pedidos_router
+from entidades.archivos.router import router as archivos_router
 
 
 def set_routers(app):
@@ -116,6 +118,24 @@ def set_routers(app):
         router=observaciones_router,
         prefix="/api/v1/observaciones",
         tags=["Observaciones"],
+        #####
+        # dependencies=[Depends(get_token_header)],
+        # responses={418: {"description": "I'm a teapot"}},
+    )
+
+    app.include_router(
+        router=pedidos_router,
+        prefix="/api/v1/pedidos",
+        tags=["Pedidos"],
+        #####
+        # dependencies=[Depends(get_token_header)],
+        # responses={418: {"description": "I'm a teapot"}},
+    )
+
+    app.include_router(
+        router=archivos_router,
+        prefix="/api/v1/archivos",
+        tags=["Archivos"],
         #####
         # dependencies=[Depends(get_token_header)],
         # responses={418: {"description": "I'm a teapot"}},
