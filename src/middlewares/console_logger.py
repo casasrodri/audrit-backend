@@ -8,7 +8,10 @@ def console_logger_midd(app: FastAPI):
     async def console_log(request: Request, call_next):
         body = await request.body()
         if body:
-            print("  >> BODY:", json.loads(body))
+            try:
+                print("  >> BODY:", json.loads(body))
+            except UnicodeDecodeError:
+                print("  >> BODY: Encoded data")
 
         response = await call_next(request)
         return response
