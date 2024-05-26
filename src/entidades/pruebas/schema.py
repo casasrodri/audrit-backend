@@ -17,4 +17,4 @@ class PruebaDB(BaseSchema):
     revision = relationship("RevisionDB", back_populates="pruebas")
 
     def __repr__(self):
-        return f"<PruebaDB:{self.id} {self.nombre}>"
+        return f"<{self.__class__.__name__}:{self.id} {self.nombre}>"

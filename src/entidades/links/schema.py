@@ -12,4 +12,4 @@ class LinkDB(BaseSchema):
     id2 = Column(Integer, nullable=False)
 
     def __repr__(self):
-        return f"<LinkDB:{self.id}>"
+        return f"<{self.__class__.__name__}:{self.id}>"

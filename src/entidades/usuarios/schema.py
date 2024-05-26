@@ -18,7 +18,7 @@ class RolUsuarioDB(BaseSchema):
     )
 
     def __repr__(self):
-        return f"<RolUsuarioDB:{self.id} {self.nombre}>"
+        return f"<{self.__class__.__name__}:{self.id} {self.nombre}>"
 
 
 class UsuarioDB(BaseSchema):
@@ -35,4 +35,4 @@ class UsuarioDB(BaseSchema):
     rol = relationship("RolUsuarioDB", back_populates="usuarios")
 
     def __repr__(self):
-        return f"<UsuarioDB:{self.id} {self.nombre} {self.apellido}>"
+        return f"<{self.__class__.__name__}:{self.id} {self.nombre} {self.apellido}>"

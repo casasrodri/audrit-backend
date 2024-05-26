@@ -25,4 +25,4 @@ class ObservacionDB(BaseSchema):
     revision = relationship("RevisionDB", back_populates="observaciones")
 
     def __repr__(self):
-        return f"<ObservacionDB:{self.id} [{self.riesgo}] {self.nombre}>"
+        return f"<{self.__class__.__name__}:{self.id} [{self.riesgo}] {self.nombre}>"
