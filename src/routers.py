@@ -1,3 +1,4 @@
+from entidades.usuarios.router import router as usuarios_router
 from entidades.sesiones.router import router as sesiones_router
 from entidades.auditorias.router import router as auditorias_router
 from entidades.revisiones.router import router as revisiones_router
@@ -13,8 +14,17 @@ from entidades.observaciones.router import router as observaciones_router
 
 def set_routers(app):
     app.include_router(
+        router=usuarios_router,
+        prefix="/api/v1/usuarios",
+        tags=["Usuarios"],
+        #####
+        # dependencies=[Depends(get_token_header)],
+        # responses={418: {"description": "I'm a teapot"}},
+    )
+
+    app.include_router(
         router=sesiones_router,
-        prefix="/api/v1",
+        prefix="/api/v1/sesiones",
         tags=["Sesiones"],
         #####
         # dependencies=[Depends(get_token_header)],

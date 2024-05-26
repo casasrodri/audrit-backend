@@ -1,6 +1,5 @@
 from fastapi import APIRouter, status
 from .controller import ObservacionesController
-from entidades.links.controller import LinksController
 from .model import Observacion, ResultadoBusquedaObservacion, Observacion
 
 router = APIRouter()
@@ -40,7 +39,6 @@ router.add_api_route(
     response_model=list[ResultadoBusquedaObservacion],
 )
 
-# TODO
 router.add_api_route(
     path="",
     endpoint=ObservacionesController.create,

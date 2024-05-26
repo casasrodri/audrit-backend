@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Depends, status
 from typing import Annotated
-from entidades.usuarios.model import UsuarioDB
+from entidades.usuarios.model import UsuarioAutenticacion
 from utils.jwt import leer_token
 from jose.exceptions import JWTError
 from fastapi import status
@@ -11,12 +11,12 @@ from utils.logger import logger
 
 
 # Dependencia para obtener los datos del usuario a partir de la cookie
-async def __obtener_usuario_logueado(request: Request) -> UsuarioDB:
-    usuario: UsuarioDB = request.state.user
+async def __obtener_usuario_logueado(request: Request) -> UsuarioAutenticacion:
+    usuario: UsuarioAutenticacion = request.state.user
     return usuario
 
 
-EsteUsuario = Annotated[UsuarioDB, Depends(__obtener_usuario_logueado)]
+EsteUsuario = Annotated[UsuarioAutenticacion, Depends(__obtener_usuario_logueado)]
 
 PATH_PUBLICOS = [
     "/docs",
@@ -92,9 +92,10 @@ def autenticacion_midd(app: FastAPI):
 
         # Agrega el valor de la cookie al contexto del request
         db = DatabaseMock()
-        usuario: UsuarioDB = db.obtener_usuario_por_email(email_jwt)
+        usuario: UsuarioAutenticacion = db.obtener_usuario_por_email(email_jwt)
 
         request.state.user = usuario
+        print(f"Usuario autenticado: {usuario}")
 
         # Llama a la siguiente función en la cadena de middleware
         response = await call_next(request)
