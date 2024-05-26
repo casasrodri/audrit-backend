@@ -22,12 +22,6 @@ elif Environment.MODE == "production":
 else:
     raise ValueError("Ambiente no reconocido. Debe ser 'dev' o 'production'.")
 
-
-def init_db():
-    BaseSchema.metadata.create_all(bind=engine)
-    logger.info(f"Base de datos inicializada: {motor}")
-
-
 SessionLocal: sessionmaker = sessionmaker(
     autocommit=False, autoflush=False, bind=engine
 )
@@ -35,6 +29,12 @@ SessionLocal: sessionmaker = sessionmaker(
 
 BaseSchema = declarative_base()
 "Base para heredar a las clases que representen tablas en la base de datos."
+
+
+def init_db():
+    BaseSchema.metadata.create_all(bind=engine)
+    # print(BaseSchema.metadata.tables)
+    logger.info(f"Base de datos inicializada: {motor}")
 
 
 # Dependency
