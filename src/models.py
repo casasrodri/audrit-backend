@@ -7,3 +7,10 @@ class FromAttributes:
     class Config:
         from_attributes = True
         # extra = "forbid"
+
+
+class ResultadoBusquedaGlobal(FromAttributes, BaseModel):
+    nombre: str
+    texto: str | None
+    objeto: str
+    objeto_id: int

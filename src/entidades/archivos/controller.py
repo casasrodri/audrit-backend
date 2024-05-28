@@ -3,6 +3,7 @@ from controllers import BaseController
 from database import SqlDB
 from .schema import ArchivoDB
 from fastapi.responses import FileResponse
+from models import ResultadoBusquedaGlobal
 
 
 class ArchivosController(BaseController):
@@ -24,3 +25,22 @@ class ArchivosController(BaseController):
         return FileResponse(
             archivo.path, filename=archivo.nombre, media_type=archivo.tipo
         )
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(ArchivoDB).filter(ArchivoDB.nombre.ilike(f"%{texto}%")).all()
+        )
+
+        out = []
+        for rtdo in encontrados:
+            out.append(
+                ResultadoBusquedaGlobal(
+                    nombre=rtdo.nombre,
+                    # texto=None,
+                    texto=rtdo.nombre,
+                    objeto="requerimiento",
+                    objeto_id=rtdo.pedido_id,
+                )
+            )
+
+        return out

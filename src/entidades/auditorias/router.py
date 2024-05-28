@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from .controller import AuditoriasController
 from .model import Auditoria
+from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 
@@ -31,4 +32,11 @@ router.add_api_route(
     endpoint=AuditoriasController.get_by_id,
     methods=["GET"],
     response_model=Auditoria,
+)
+
+router.add_api_route(
+    path="/buscarGlobal/{texto}",
+    endpoint=AuditoriasController.buscar_global,
+    methods=["GET"],
+    response_model=list[ResultadoBusquedaGlobal],
 )

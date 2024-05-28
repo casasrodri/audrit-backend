@@ -2,7 +2,7 @@ from controllers import BaseController
 from fastapi import HTTPException, status
 from database import SqlDB
 from .model import AuditoriaCreacion
-
+from models import ResultadoBusquedaGlobal
 
 from .schema import AuditoriaDB
 
@@ -47,3 +47,30 @@ class AuditoriasController(BaseController):
         db.refresh(db_aud)
 
         return db_aud
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(AuditoriaDB)
+            .filter(
+                AuditoriaDB.sigla.ilike(f"%{texto}%")
+                | AuditoriaDB.nombre.ilike(f"%{texto}%")
+                | AuditoriaDB.tipo.ilike(f"%{texto}%")
+            )
+            .all()
+        )
+
+        print(encontrados)
+
+        out = []
+        for rtdo in encontrados:
+            texto = f"{rtdo.sigla} - {rtdo.nombre} - {rtdo.tipo}"
+            out.append(
+                ResultadoBusquedaGlobal(
+                    nombre=rtdo.nombre,
+                    texto=texto,
+                    objeto="auditoria",
+                    objeto_id=rtdo.id,
+                )
+            )
+
+        return out
