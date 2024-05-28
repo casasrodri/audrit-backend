@@ -21,6 +21,7 @@ import socket
 nuevos_orig = [i[4][0] for i in socket.getaddrinfo(socket.gethostname(), None)]
 ORIGINS = [f"http://{ip}:5173" for ip in nuevos_orig if ":" not in ip]
 ORIGINS.append("http://localhost:5173")
+# ORIGINS.append("https://npmqbzfq-5173.brs.devtunnels.ms")
 
 
 def cors_midd(app: FastAPI) -> None:
