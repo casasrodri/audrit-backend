@@ -2,7 +2,7 @@ from datetime import datetime
 from fastapi import HTTPException, status, UploadFile
 from controllers import BaseController
 from database import SqlDB
-from .model import PedidoCreacion, ComentarioPedidoCreacion
+from .model import PedidoCreacion, ComentarioPedidoCreacion, PedidoActualizacion
 from .schema import PedidoDB, ComentariosPedidosDB
 from entidades.usuarios.controller import UsuariosController
 from entidades.archivos.schema import ArchivoDB
@@ -22,6 +22,16 @@ def guardar_archivo(archivo: UploadFile):
 class PedidosController(BaseController):
     async def get_all(db: SqlDB):  # OK
         return db.query(PedidoDB).all()
+
+    async def get_all_by_usuario(db: SqlDB, usuario_id: int):
+        user = await UsuariosController.get_by_id(db, usuario_id)
+        return (
+            db.query(PedidoDB)
+            .filter(
+                (PedidoDB.creador_id == user.id) | (PedidoDB.destinatario_id == user.id)
+            )
+            .all()
+        )
 
     async def get(db: SqlDB, id: int):  # Ok
         pedido = db.query(PedidoDB).get(id)
@@ -51,6 +61,22 @@ class PedidosController(BaseController):
         )
 
         db.add(db_pedido)
+        db.commit()
+        db.refresh(db_pedido)
+
+        return db_pedido
+
+    async def update(db: SqlDB, id: int, pedido: PedidoActualizacion):
+        db_pedido = await PedidosController.get(db, id)
+
+        destinatario = await UsuariosController.get_by_id(db, pedido.destinatario_id)
+
+        db_pedido.nombre = pedido.nombre
+        db_pedido.descripcion = pedido.descripcion
+        db_pedido.estado = pedido.estado
+        db_pedido.fecha_vencimiento = pedido.fecha_vencimiento
+        db_pedido.destinatario = destinatario
+
         db.commit()
         db.refresh(db_pedido)
 

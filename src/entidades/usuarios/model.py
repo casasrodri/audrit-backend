@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
+from pydantic import model_validator
 
 
 class RolUsuario(str, Enum):
@@ -31,7 +32,13 @@ class UsuarioOut(UsuarioBase):
         descripcion: str
 
     id: int
+    nombre_completo: str
     rol: Rol
+
+    @model_validator(mode="before")
+    def add_nombre_completo(self):
+        self.nombre_completo = f"{self.nombre} {self.apellido}"
+        return self
 
 
 class UsuarioAutenticacion(UsuarioOut, UsuarioLogin):

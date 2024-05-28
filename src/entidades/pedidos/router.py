@@ -25,12 +25,19 @@ router.add_api_route(
     response_model=Pedido,
 )
 
-# router.add_api_route(
-#     path="/{id}",
-#     endpoint=PedidosController.update,
-#     methods=["PUT"],
-#     response_model=Pedido,
-# )
+router.add_api_route(
+    path="/usuario/{usuario_id}",
+    endpoint=PedidosController.get_all_by_usuario,
+    methods=["GET"],
+    response_model=list[Pedido],
+)
+
+router.add_api_route(
+    path="/{id}",
+    endpoint=PedidosController.update,
+    methods=["PUT"],
+    response_model=Pedido,
+)
 
 # router.add_api_route(
 #     path="/revision/{revision_id}/buscar/{texto_buscado}",

@@ -48,11 +48,12 @@ async def login(db: SqlDB, credenciales: UsuarioLogin, response: Response):
     response.set_cookie(
         key="nombre",
         value="Rodri",
-        secure=True,
-        httponly=False,
-        samesite="None",
-        expires=JWT_EXPIRE_MINUTES * 60,
     )
+    response.set_cookie(
+        key="idUsuario",
+        value="1",
+    )
+
     # TODO Agregar acá demás datos que le sirvan al front, como los menús que podrá ver
 
     # 4. Devuelvo el resultado del login
@@ -60,6 +61,11 @@ async def login(db: SqlDB, credenciales: UsuarioLogin, response: Response):
         "status": "ok",
         "description": "Login correcto.",
         "jwt": access_token,
+        "usuario": {
+            "id": 1,
+            "nombre": "Rodri",
+            "email": credenciales.email,
+        },
     }
 
 

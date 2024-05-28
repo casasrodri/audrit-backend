@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime
 from sqlalchemy.orm import relationship
 from database import BaseSchema
 from datetime import datetime
@@ -8,7 +8,7 @@ class ComentariosPedidosDB(BaseSchema):
     __tablename__ = "comentarios_pedidos"
 
     id = Column(Integer, primary_key=True, index=True)
-    momento = Column(Date, index=True, default=datetime.now)
+    momento = Column(DateTime, index=True, default=datetime.now)
 
     pedido_id = Column(Integer(), ForeignKey("pedidos.id"))
     pedido = relationship("PedidoDB", back_populates="comentarios")

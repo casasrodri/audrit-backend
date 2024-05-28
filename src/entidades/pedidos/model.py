@@ -27,7 +27,8 @@ class PedidoCreacion(PedidoBase):
     destinatario_id: int
 
 
-# class PedidoActualizacion(PedidoCreacion): ...
+class PedidoActualizacion(PedidoBase):
+    destinatario_id: int
 
 
 class ComentarioPedidoCreacion(BaseModel):
