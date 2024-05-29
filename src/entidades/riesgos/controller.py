@@ -4,6 +4,8 @@ from database import SqlDB
 from .model import RiesgoCreacion, RiesgoActualizacion
 from .schema import RiesgoDB
 from entidades.revisiones.controller import RevisionesController
+from models import ResultadoBusquedaGlobal
+from utils.helpers import extraer_medio
 
 
 class RiesgosController(BaseController):
@@ -112,3 +114,51 @@ class RiesgosController(BaseController):
     #         raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
 
     #     return riesgo
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(RiesgoDB)
+            .filter(
+                RiesgoDB.nombre.ilike(f"%{texto}%")
+                | RiesgoDB.descripcion.ilike(f"%{texto}%")
+            )
+            .all()
+        )
+
+        out = set()
+        for rie in encontrados:
+            rev = rie.revision
+            aud = rev.auditoria
+
+            def agregar(encontrado: str = None):
+                if len(rie.descripcion) > 77:
+                    descr = rie.descripcion[:77] + "..."
+                else:
+                    descr = rie.descripcion
+
+                out.add(
+                    ResultadoBusquedaGlobal(
+                        nombre=f"{rie.nombre} ({rie.nivel})",
+                        texto=encontrado or descr,
+                        tipo="riesgo",
+                        objeto={
+                            "siglaAudit": aud.sigla,
+                            "siglaRev": rev.sigla,
+                            "id": rie.id,
+                        },
+                    )
+                )
+
+            # Variables
+            buscar = texto.replace("\n", " ").lower()
+            descripcion = rie.descripcion.replace("\n", " ").lower()
+
+            # Agregación de coincidencias
+            if buscar in descripcion:
+                subtextos = extraer_medio(buscar, descripcion)
+                for sub in subtextos:
+                    agregar(sub)
+            else:
+                agregar()
+
+        return out

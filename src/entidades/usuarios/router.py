@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from .controller import UsuariosController
 from .model import UsuarioOut, UsuarioCreacion
+from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 
@@ -54,3 +55,10 @@ router.add_api_route(
 #     methods=["DELETE"],
 #     response_model=Revision,
 # )
+
+router.add_api_route(
+    path="/buscarGlobal/{texto:path}",
+    endpoint=UsuariosController.buscar_global,
+    methods=["GET"],
+    response_model=list[ResultadoBusquedaGlobal],
+)

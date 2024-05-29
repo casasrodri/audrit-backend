@@ -8,6 +8,9 @@ from .model import (
     RelevamientoNodoData,
     RelevamientoActualizacion,
 )
+from models import ResultadoBusquedaGlobal
+from utils.helpers import extraer_medio, editorjs_to_text
+from entidades.documentos.schema import DocumentoDB
 
 
 class RelevamientosController(BaseController):
@@ -106,3 +109,96 @@ class RelevamientosController(BaseController):
         db.commit()
 
         return db_relevamiento
+
+    async def buscar_global(db: SqlDB, texto: str):
+        out = []
+        out += await RelevamientosController._buscar_global_relevamientos(db, texto)
+        out += await RelevamientosController._buscar_global_documentos(db, texto)
+        return set(out)
+
+    async def _buscar_global_relevamientos(
+        db: SqlDB, texto: str
+    ) -> list[ResultadoBusquedaGlobal]:
+        # print("Se buscó en relevamientos.")
+
+        encontrados = (
+            db.query(RelevamientoDB)
+            .filter(
+                (RelevamientoDB.nombre.ilike(f"%{texto}%"))
+                & (RelevamientoDB.tipo != "documento")
+            )
+            .all()
+        )
+
+        out = set()
+        for relev in encontrados:
+            revision = relev.revision
+            auditoria = revision.auditoria
+
+            out.add(
+                ResultadoBusquedaGlobal(
+                    nombre=relev.nombre,
+                    texto=f"Revisión: {revision.nombre}",
+                    tipo="revision",
+                    objeto={
+                        "siglaAudit": auditoria.sigla,
+                        "siglaRev": revision.sigla,
+                    },
+                )
+            )
+
+        # print(out)
+        return out
+
+    async def _buscar_global_documentos(
+        db: SqlDB, texto: str
+    ) -> list[ResultadoBusquedaGlobal]:
+        # print("Se buscó en documentos.")
+
+        encontrados = (
+            db.query(DocumentoDB)
+            .join(RelevamientoDB)
+            .filter(
+                (RelevamientoDB.nombre.ilike(f"%{texto}%"))
+                | (DocumentoDB.contenido.ilike(f"%{texto}%"))
+            )
+            .all()
+        )
+
+        out = set()
+        for doc in encontrados:
+            relev = doc.relevamiento
+            revision = relev.revision
+            auditoria = revision.auditoria
+            # -------------------------------
+            nombre = relev.nombre.replace("\n", " ").lower()
+            contenido = editorjs_to_text(doc.contenido)
+
+            def agregar(encontrado: str = None):
+                if len(contenido) > 77:
+                    descr = contenido[:77] + "..."
+                else:
+                    descr = contenido
+
+                out.add(
+                    ResultadoBusquedaGlobal(
+                        nombre=relev.nombre,
+                        texto=encontrado or descr,
+                        tipo="documento",
+                        objeto={
+                            "siglaAudit": auditoria.sigla,
+                            "siglaRev": revision.sigla,
+                            "relevId": relev.id,
+                        },
+                    )
+                )
+
+            if texto in contenido:
+                subtextos = extraer_medio(texto, contenido)
+                for sub in subtextos:
+                    agregar(sub)
+            elif texto in nombre:
+                agregar()
+
+        # print(out)
+        return out

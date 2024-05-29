@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status
 from .controller import PedidosController
 from .model import Pedido, ComentarioPedido, ArchivoResumido
+from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 
@@ -84,3 +85,10 @@ router.add_api_route(
 #     methods=["POST"],
 #     status_code=status.HTTP_201_CREATED,
 # )
+
+router.add_api_route(
+    path="/buscarGlobal/{texto:path}",
+    endpoint=PedidosController.buscar_global,
+    methods=["GET"],
+    response_model=list[ResultadoBusquedaGlobal],
+)

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from .controller import PruebasController
 from .model import Prueba, ResultadoBusquedaPrueba
+from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 
@@ -55,3 +56,10 @@ router.add_api_route(
 #     methods=["DELETE"],
 #     response_model=Control,
 # )
+
+router.add_api_route(
+    path="/buscarGlobal/{texto:path}",
+    endpoint=PruebasController.buscar_global,
+    methods=["GET"],
+    response_model=list[ResultadoBusquedaGlobal],
+)

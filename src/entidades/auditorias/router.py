@@ -35,7 +35,7 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    path="/buscarGlobal/{texto}",
+    path="/buscarGlobal/{texto:path}",
     endpoint=AuditoriasController.buscar_global,
     methods=["GET"],
     response_model=list[ResultadoBusquedaGlobal],

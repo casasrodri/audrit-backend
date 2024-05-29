@@ -8,6 +8,8 @@ from .model import (
     RevisionNodoData,
     RevisionActualizacion,
 )
+from models import ResultadoBusquedaGlobal
+from utils.helpers import extraer_medio
 
 
 class RevisionesController(BaseController):
@@ -98,3 +100,45 @@ class RevisionesController(BaseController):
         db.commit()
 
         return db_revision
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(RevisionDB)
+            .filter(
+                (RevisionDB.nombre.ilike(f"%{texto}%"))
+                | (RevisionDB.descripcion.ilike(f"%{texto}%"))
+            )
+            .all()
+        )
+
+        out = set()
+        for revi in encontrados:
+            nombre = revi.nombre.replace("\n", " ").lower()
+            descrip = revi.descripcion.replace("\n", " ").lower()
+
+            def agregar(encontrado: str = None):
+                descr = f"Auditoría: {revi.auditoria.nombre} - {revi.descripcion}"
+                if len(descr) > 77:
+                    descr = descr[:77] + "..."
+                else:
+                    descr = descr
+
+                out.add(
+                    ResultadoBusquedaGlobal(
+                        nombre=revi.nombre,
+                        texto=encontrado or descr,
+                        tipo="revision",
+                        objeto={
+                            "siglaAudit": revi.auditoria.sigla,
+                            "siglaRev": revi.sigla,
+                        },
+                    )
+                )
+
+            if texto in descrip:
+                subtextos = extraer_medio(texto, descrip)
+                for sub in subtextos:
+                    agregar(sub)
+            elif texto in nombre:
+                agregar()
+        return out

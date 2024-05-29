@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from .controller import RevisionesController
 from .model import Revision, RevisionNodo, RevisionPorAuditoria
+from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 
@@ -52,4 +53,11 @@ router.add_api_route(
     endpoint=RevisionesController.delete,
     methods=["DELETE"],
     response_model=Revision,
+)
+
+router.add_api_route(
+    path="/buscarGlobal/{texto:path}",
+    endpoint=RevisionesController.buscar_global,
+    methods=["GET"],
+    response_model=list[ResultadoBusquedaGlobal],
 )

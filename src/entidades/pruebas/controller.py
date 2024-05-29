@@ -4,6 +4,8 @@ from database import SqlDB
 from .model import PruebaCreacion, PruebaActualizacion
 from .schema import PruebaDB
 from entidades.revisiones.controller import RevisionesController
+from models import ResultadoBusquedaGlobal
+from utils.helpers import extraer_medio
 
 
 class PruebasController(BaseController):
@@ -81,3 +83,63 @@ class PruebasController(BaseController):
     #         raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
 
     #     return control
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(PruebaDB)
+            .filter(
+                PruebaDB.nombre.ilike(f"%{texto}%")
+                | PruebaDB.descripcion.ilike(f"%{texto}%")
+                | PruebaDB.informe.ilike(f"%{texto}%")
+            )
+            .all()
+        )
+
+        out = set()
+        for pru in encontrados:
+            rev = pru.revision
+            aud = rev.auditoria
+
+            def agregar(encontrado: str = None):
+                if len(pru.descripcion) > 77:
+                    descr = pru.descripcion[:77] + "..."
+                else:
+                    descr = pru.descripcion
+
+                out.add(
+                    ResultadoBusquedaGlobal(
+                        nombre=pru.nombre,
+                        texto=encontrado or descr,
+                        tipo="prueba",
+                        objeto={
+                            "siglaAudit": aud.sigla,
+                            "siglaRev": rev.sigla,
+                            "id": pru.id,
+                        },
+                    )
+                )
+
+            # Variables
+            buscar = texto.replace("\n", " ").lower()
+            nombre = pru.nombre.lower()
+            descripcion = pru.descripcion.replace("\n", " ").lower()
+            informe = pru.informe.replace("\n", " ").lower()
+            solo_nombre = True
+
+            # Agregación de coincidencias
+            if buscar in descripcion:
+                solo_nombre = False
+                subtextos = extraer_medio(buscar, descripcion)
+                for sub in subtextos:
+                    agregar(sub)
+
+            if buscar in informe:
+                solo_nombre = False
+                subtextos = extraer_medio(buscar, informe, longitud=70)
+                for sub in subtextos:
+                    agregar(f"Informe: {sub.upper()}")
+
+            if solo_nombre and buscar in nombre:
+                agregar()
+
+        return out

@@ -4,6 +4,8 @@ from database import SqlDB
 from .model import ObservacionCreacion, ObservacionActualizacion
 from .schema import ObservacionDB
 from entidades.revisiones.controller import RevisionesController
+from models import ResultadoBusquedaGlobal
+from utils.helpers import extraer_medio
 
 
 class ObservacionesController(BaseController):
@@ -99,3 +101,72 @@ class ObservacionesController(BaseController):
     #         raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
 
     #     return observacion
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(ObservacionDB)
+            .filter(
+                ObservacionDB.nombre.ilike(f"%{texto}%")
+                | ObservacionDB.descripcion.ilike(f"%{texto}%")
+                | ObservacionDB.efectos.ilike(f"%{texto}%")
+                | ObservacionDB.recomendaciones.ilike(f"%{texto}%")
+            )
+            .all()
+        )
+
+        out = set()
+        for obs in encontrados:
+            rev = obs.revision
+            aud = rev.auditoria
+
+            def agregar(encontrado: str = None):
+                if len(obs.descripcion) > 77:
+                    descr = obs.descripcion[:77] + "..."
+                else:
+                    descr = obs.descripcion
+
+                out.add(
+                    ResultadoBusquedaGlobal(
+                        nombre=obs.nombre,
+                        texto=encontrado or descr,
+                        tipo="observacion",
+                        objeto={
+                            "siglaAudit": aud.sigla,
+                            "siglaRev": rev.sigla,
+                            "id": obs.id,
+                        },
+                    )
+                )
+
+            # Variables
+            buscar = texto.replace("\n", " ").lower()
+            nombre = obs.nombre.lower()
+            descripcion = obs.descripcion.replace("\n", " ").lower()
+            efectos = obs.efectos.replace("\n", " ").lower()
+            recomendaciones = obs.recomendaciones.replace("\n", " ").lower()
+            solo_nombre = True
+            print("Procesando obs:", obs)
+
+            # Agregación de coincidencias
+            if buscar in descripcion:
+                solo_nombre = False
+                subtextos = extraer_medio(buscar, descripcion)
+                for sub in subtextos:
+                    agregar(sub)
+
+            if buscar in efectos:
+                solo_nombre = False
+                subtextos = extraer_medio(buscar, efectos, longitud=70)
+                for sub in subtextos:
+                    agregar(f"Efectos: {sub}")
+
+            if buscar in recomendaciones:
+                solo_nombre = False
+                subtextos = extraer_medio(buscar, recomendaciones, longitud=65)
+                for sub in subtextos:
+                    agregar(f"Recomendaciones: {sub}")
+
+            if solo_nombre and buscar in nombre:
+                agregar()
+
+        return out

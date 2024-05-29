@@ -59,17 +59,15 @@ class AuditoriasController(BaseController):
             .all()
         )
 
-        print(encontrados)
-
-        out = []
-        for rtdo in encontrados:
-            texto = f"{rtdo.sigla} - {rtdo.nombre} - {rtdo.tipo}"
-            out.append(
+        out = set()
+        for audit in encontrados:
+            texto = f"{audit.sigla} - {audit.nombre} - {audit.tipo}"
+            out.add(
                 ResultadoBusquedaGlobal(
-                    nombre=rtdo.nombre,
+                    nombre=audit.nombre,
                     texto=texto,
-                    objeto="auditoria",
-                    objeto_id=rtdo.id,
+                    tipo="auditoria",
+                    objeto={"siglaAudit": audit.sigla},
                 )
             )
 

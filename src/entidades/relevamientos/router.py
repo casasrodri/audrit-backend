@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from .controller import RelevamientosController
 from .model import Relevamiento, RelevamientoNodo
+from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 
@@ -51,4 +52,11 @@ router.add_api_route(
     endpoint=RelevamientosController.delete,
     methods=["DELETE"],
     response_model=Relevamiento,
+)
+
+router.add_api_route(
+    path="/buscarGlobal/{texto:path}",
+    endpoint=RelevamientosController.buscar_global,
+    methods=["GET"],
+    response_model=list[ResultadoBusquedaGlobal],
 )

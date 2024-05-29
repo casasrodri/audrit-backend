@@ -3,6 +3,8 @@ from controllers import BaseController
 from database import SqlDB
 from .schema import UsuarioDB, RolUsuarioDB
 from .model import UsuarioOut, UsuarioCreacion
+from models import ResultadoBusquedaGlobal
+from sqlalchemy import func
 
 
 class UsuariosController(BaseController):
@@ -89,3 +91,29 @@ class UsuariosController(BaseController):
 
     # async def delete(id: int):
     #     return True
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(UsuarioDB)
+            .filter(
+                func.concat(UsuarioDB.nombre, " ", UsuarioDB.apellido).ilike(
+                    f"%{texto}%"
+                )
+            )
+            .all()
+        )
+
+        out = set()
+        for user in encontrados:
+            out.add(
+                ResultadoBusquedaGlobal(
+                    nombre=f"{user.nombre} {user.apellido}",
+                    texto=f"{user.rol.nombre} - {user.email}",
+                    tipo="usuario",
+                    objeto={
+                        "email": user.email,
+                    },
+                )
+            )
+
+        return out

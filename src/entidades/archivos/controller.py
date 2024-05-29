@@ -14,8 +14,6 @@ class ArchivosController(BaseController):
             db.query(ArchivoDB).filter(ArchivoDB.path.ilike(f"%/{nombre}")).first()
         )
 
-        print(nombre, archivo)
-
         if archivo is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -31,15 +29,16 @@ class ArchivosController(BaseController):
             db.query(ArchivoDB).filter(ArchivoDB.nombre.ilike(f"%{texto}%")).all()
         )
 
-        out = []
-        for rtdo in encontrados:
-            out.append(
+        out = set()
+        for arch in encontrados:
+            out.add(
                 ResultadoBusquedaGlobal(
-                    nombre=rtdo.nombre,
-                    # texto=None,
-                    texto=rtdo.nombre,
-                    objeto="requerimiento",
-                    objeto_id=rtdo.pedido_id,
+                    nombre=arch.nombre,
+                    texto=f"Requerimiento: {arch.pedido.nombre}",
+                    tipo="archivo",
+                    objeto={
+                        "requerimId": arch.pedido_id,
+                    },
                 )
             )
 

@@ -6,6 +6,8 @@ from .model import PedidoCreacion, ComentarioPedidoCreacion, PedidoActualizacion
 from .schema import PedidoDB, ComentariosPedidosDB
 from entidades.usuarios.controller import UsuariosController
 from entidades.archivos.schema import ArchivoDB
+from models import ResultadoBusquedaGlobal
+from utils.helpers import extraer_medio
 
 
 def guardar_archivo(archivo: UploadFile):
@@ -125,3 +127,43 @@ class PedidosController(BaseController):
             subidos.append(db_archivo)
 
         return subidos
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(PedidoDB)
+            .filter(
+                (PedidoDB.nombre.ilike(f"%{texto}%"))
+                | (PedidoDB.descripcion.ilike(f"%{texto}%"))
+            )
+            .all()
+        )
+
+        out = set()
+        for req in encontrados:
+            nombre = req.nombre.replace("\n", " ").lower()
+            descrip = req.descripcion.replace("\n", " ").lower()
+
+            def agregar(encontrado: str = None):
+                if len(req.descripcion) > 77:
+                    descr = req.descripcion[:77] + "..."
+                else:
+                    descr = req.descripcion
+
+                out.add(
+                    ResultadoBusquedaGlobal(
+                        nombre=req.nombre,
+                        texto=encontrado or descr,
+                        tipo="requerimiento",
+                        objeto={
+                            "id": req.id,
+                        },
+                    )
+                )
+
+            if texto in descrip:
+                subtextos = extraer_medio(texto, descrip)
+                for sub in subtextos:
+                    agregar(sub)
+            elif texto in nombre:
+                agregar()
+        return out

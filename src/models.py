@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Any
 
 
 class FromAttributes:
@@ -12,5 +13,11 @@ class FromAttributes:
 class ResultadoBusquedaGlobal(FromAttributes, BaseModel):
     nombre: str
     texto: str | None
-    objeto: str
-    objeto_id: int
+    tipo: str
+    objeto: dict
+
+    def __hash__(self) -> int:
+        return hash(self.nombre + self.texto + self.tipo)
+
+    def __repr__(self) -> str:
+        return f"< ResultadoBusquedaGlobal[{self.tipo}] {self.nombre} | {self.texto} >"

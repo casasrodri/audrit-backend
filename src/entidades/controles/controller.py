@@ -4,6 +4,8 @@ from database import SqlDB
 from .model import ControlCreacion, ControlActualizacion
 from .schema import ControlDB
 from entidades.revisiones.controller import RevisionesController
+from models import ResultadoBusquedaGlobal
+from utils.helpers import extraer_medio
 
 
 class ControlesController(BaseController):
@@ -82,3 +84,60 @@ class ControlesController(BaseController):
     #         raise HTTPException(status_code=404, detail="Relevamiento no encontrado")
 
     #     return control
+
+    async def buscar_global(db: SqlDB, texto: str):
+        encontrados = (
+            db.query(ControlDB)
+            .filter(
+                ControlDB.nombre.ilike(f"%{texto}%")
+                | ControlDB.descripcion.ilike(f"%{texto}%")
+                | ControlDB.ejecutor.ilike(f"%{texto}%")
+            )
+            .all()
+        )
+
+        out = set()
+        for ctrl in encontrados:
+            rev = ctrl.revision
+            aud = rev.auditoria
+
+            def agregar(encontrado: str = None):
+                if len(ctrl.descripcion) > 77:
+                    descr = ctrl.descripcion[:77] + "..."
+                else:
+                    descr = ctrl.descripcion
+
+                out.add(
+                    ResultadoBusquedaGlobal(
+                        nombre=ctrl.nombre,
+                        texto=encontrado or descr,
+                        tipo="control",
+                        objeto={
+                            "siglaAudit": aud.sigla,
+                            "siglaRev": rev.sigla,
+                            "id": ctrl.id,
+                        },
+                    )
+                )
+
+            # Variables
+            buscar = texto.replace("\n", " ").lower()
+            nombre = ctrl.nombre.lower()
+            descripcion = ctrl.descripcion.replace("\n", " ").lower()
+            solo_nombre = True
+
+            # Agregación de coincidencias
+            if buscar in descripcion:
+                solo_nombre = False
+                subtextos = extraer_medio(buscar, descripcion)
+                for sub in subtextos:
+                    agregar(sub)
+
+            if buscar in ctrl.ejecutor.lower():
+                solo_nombre = False
+                agregar(f"Realizado por: {ctrl.ejecutor}")
+
+            if solo_nombre and buscar in nombre:
+                agregar()
+
+        return out
