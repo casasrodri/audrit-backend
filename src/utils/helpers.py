@@ -1,4 +1,5 @@
 import json
+import hashlib
 
 
 def extraer_medio(buscar, texto, longitud=80):
@@ -92,3 +93,7 @@ def editorjs_to_text(contenido: str) -> str:
     ]
 
     return " ".join(lineas)
+
+
+def hash_string(string: str) -> str:
+    return hashlib.sha256(string.encode()).hexdigest()

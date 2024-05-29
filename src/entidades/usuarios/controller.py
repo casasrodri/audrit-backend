@@ -2,9 +2,18 @@ from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
 from .schema import UsuarioDB, RolUsuarioDB
-from .model import UsuarioOut, UsuarioCreacion
+from .model import UsuarioCreacion
 from models import ResultadoBusquedaGlobal
 from sqlalchemy import func
+from utils.helpers import hash_string
+
+
+class CredencialesException(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales incorrectas.",
+        )
 
 
 class UsuariosController(BaseController):
@@ -37,9 +46,8 @@ class UsuariosController(BaseController):
         db_usuario = UsuarioDB(
             nombre=usuario.nombre,
             apellido=usuario.apellido,
-            # TODO hash password
             email=usuario.email,
-            password=usuario.password,
+            password=hash_string(usuario.password),
             rol=rol,
         )
 
@@ -49,9 +57,9 @@ class UsuariosController(BaseController):
 
         return db_usuario
 
-    async def validar_credenciales(db: SqlDB, email: str, password: str) -> bool:
-        usuario = await UsuariosController.get_by_email(db, email)
-        return usuario.password == password
+    async def validar_credenciales(user: UsuarioDB, password: str):
+        if user.password != hash_string(password):
+            raise CredencialesException()
 
     async def get_by_id(db: SqlDB, id: int):
         usuario = db.query(UsuarioDB).get(id)

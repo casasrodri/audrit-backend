@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from enum import Enum
 from pydantic import model_validator
+from models import FromAttributes
 
 
 class RolUsuario(str, Enum):
@@ -26,12 +27,14 @@ class UsuarioLogin(BaseModel):
     password: str
 
 
-class UsuarioOut(UsuarioBase):
+class UsuarioOut(FromAttributes, UsuarioBase):
     class Rol(BaseModel):
         nombre: str
         descripcion: str
 
     id: int
+    nombre: str
+    apellido: str
     nombre_completo: str
     rol: Rol
 
