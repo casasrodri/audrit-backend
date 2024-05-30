@@ -15,7 +15,7 @@ logger.remove(0)
 
 logger.add(
     sys.stdout,
-    format=f"{format_time} | {format_level}{format_file_line} <b>→</b> {format_message}",
+    format=f"{format_time} {format_level}{format_file_line} <b>→</b> {format_message}",
     colorize=True,
     level=LOG_LEVEL,
 )
