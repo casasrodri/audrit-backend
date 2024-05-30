@@ -11,7 +11,7 @@ class RolUsuarioDB(BaseSchema):
     id = mapped_column(Integer, primary_key=True, index=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
-    # permisos = Column(String, index=True)
+    menues = Column(String, index=True)
     endpoints = relationship("EndpointDB", secondary=permisos, back_populates="roles")
 
     usuarios = relationship(

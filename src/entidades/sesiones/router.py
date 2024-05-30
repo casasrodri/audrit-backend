@@ -69,13 +69,6 @@ async def current_user(usuario: EsteUsuario) -> UsuarioOut:
     return usuario
 
 
-# @router.get("/menues")
-# async def obtener_menues(usuario: EsteUsuario):
-#     return {
-#         "usuario": usuario,
-#         "menues": [
-#             {"nombre": "Auditorías", "url": "/auditorias"},
-#             {"nombre": "Observaciones", "url": "/observaciones"},
-#             {"nombre": "Requerimientos", "url": "/requerimientos"},
-#         ],
-#     }
+@router.get("/me/menu")
+async def menues(usuario: EsteUsuario) -> str:
+    return usuario.rol.menues
