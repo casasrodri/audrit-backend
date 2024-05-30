@@ -193,6 +193,8 @@ class RelevamientosController(BaseController):
                     )
                 )
 
+            contenido = contenido.replace("\n", " ").lower()
+            texto = texto.lower()
             if texto in contenido:
                 subtextos = extraer_medio(texto, contenido)
                 for sub in subtextos:

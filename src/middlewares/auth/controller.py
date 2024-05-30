@@ -1,27 +1,29 @@
 from fastapi import Request, status, HTTPException
-from utils.jwt import leer_token
-from jose.exceptions import JWTError
-from fastapi import status
 from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
+from jose.exceptions import JWTError
+from utils.jwt import leer_token
 from utils.logger import logger
 from database import get_db
 from entidades.usuarios.controller import UsuariosController
+from middlewares.auth.schema import EndpointDB
+from entidades.usuarios.schema import UsuarioDB
+
+PATH_PUBLICOS = [
+    "/docs",
+    "/openapi.json",
+    "/api/v1/sesiones/jwt",
+    "/",
+]
 
 
+# AUTENTICACIÓN
 class TokenException(HTTPException):
     def __init__(self, mensaje: str, status: int = status.HTTP_401_UNAUTHORIZED):
         super().__init__(
             status_code=status,
             detail=mensaje,
         )
-
-
-PATH_PUBLICOS = [
-    "/docs",
-    "/openapi.json",
-    "/api/v1/sesiones/jwt",
-    # "/",
-]
 
 
 async def obtener_email(jwt: str) -> str:
@@ -52,20 +54,31 @@ async def obtener_email(jwt: str) -> str:
         )
 
 
-# def autenticacion_midd(app: FastAPI):
-#     @app.middleware("http")
-async def autenticacion(request: Request, call_next):
-    # Variables de contexto
-    path = request.scope.get("path")
-    # query = request.scope.get("query_string").decode()
-    jwt = request.cookies.get("jwt")
+# AUTORIZACIÓN
+def get_endpoint_response(request: Request) -> tuple:
+    for route in request.app.router.routes:
+        if isinstance(route, APIRoute):
+            _, sco = route.matches(request)
+            if sco:
+                route = sco["route"]
+                return route.path, route.methods
 
-    # logger.who(f"{path=}, {query=}, {jwt=}")
+
+# MIDDELWARE
+async def auth_middleware(request: Request, call_next):
+    # Variables de contexto
+    method = request.scope.get("method")
+    path = request.scope.get("path")
+    query = request.scope.get("query_string").decode()
+    jwt = request.cookies.get("jwt")
+    # user: UsuarioDB = request.scope.get("state").get("user")
+    db = next(get_db())
 
     if path in PATH_PUBLICOS:
         logger.who("Endpoint público")
         return await call_next(request)
 
+    # AUTENTICACIÓN
     # Se obtiene el email del token
     try:
         email_jwt = await obtener_email(jwt)
@@ -76,14 +89,28 @@ async def autenticacion(request: Request, call_next):
             content={"error": token_e.detail},
         )
 
-    # Se busca el usuario
-    db = next(get_db())
-    usuario = await UsuariosController.get_by_email(db, email_jwt)
+    # Se busca el usuario y se agrega al contexto
+    user: UsuarioDB = await UsuariosController.get_by_email(db, email_jwt)
+    request.state.user = user
+    logger.who(f"{user.nombre} {user.apellido}")
 
-    # Agrega el valor de la cookie al contexto del request
-    request.state.user = usuario
-    logger.who(f"{usuario.nombre} {usuario.apellido}")
+    # AUTORIZACION
+    # Se determina el endpoint de respuesta
+    endpoint_path, endpoint_methods = get_endpoint_response(request)
+    endpoint_requested = EndpointDB(method=method, path=endpoint_path)
 
-    # Llama a la siguiente función en la cadena de middleware
+    if endpoint_requested not in user.rol.endpoints:
+        logger.can(
+            f"El usuario {user.nombre} {user.apellido} [{user.rol.nombre}] no tiene permisos para acceder "
+            f"a [{method}] {endpoint_path}"
+        )
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"message": "No autorizado"},
+        )
+
+    logger.can("Acceso permitido.")
+    db.close()
+    # Se continua con las demás llamadas
     response = await call_next(request)
     return response

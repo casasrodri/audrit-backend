@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from database import BaseSchema
 from sqlalchemy.orm import mapped_column
+from middlewares.auth.schema import permisos
 
 
 class RolUsuarioDB(BaseSchema):
@@ -10,7 +11,8 @@ class RolUsuarioDB(BaseSchema):
     id = mapped_column(Integer, primary_key=True, index=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
-    permisos = Column(String, index=True)
+    # permisos = Column(String, index=True)
+    endpoints = relationship("EndpointDB", secondary=permisos, back_populates="roles")
 
     usuarios = relationship(
         "UsuarioDB",
@@ -45,7 +47,6 @@ class UsuarioDB(BaseSchema):
         foreign_keys="PedidoDB.destinatario_id",
         back_populates="destinatario",
     )
-
     # Relación uno-a-muchos con ComentariosPedidosDB
     comentarios_pedidos = relationship(
         "ComentariosPedidosDB",

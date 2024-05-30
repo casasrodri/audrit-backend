@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from enum import Enum
 from pydantic import model_validator
 from models import FromAttributes
+from middlewares.auth.model import Endpoint
 
 
 class RolUsuario(str, Enum):
@@ -31,6 +32,7 @@ class UsuarioOut(FromAttributes, UsuarioBase):
     class Rol(BaseModel):
         nombre: str
         descripcion: str
+        # endpoints: list[Endpoint]
 
     id: int
     nombre: str
