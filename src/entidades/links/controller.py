@@ -14,6 +14,9 @@ from entidades.objetivos_control.controller import ObjetivosControlController
 from entidades.pruebas.controller import PruebasController
 from entidades.relevamientos.controller import RelevamientosController
 from entidades.observaciones.controller import ObservacionesController
+from entidades.aplicaciones.controller import AplicacionesController
+from entidades.normativas.controller import NormativasController
+from entidades.organigramas.controller import OrganigramasController
 
 
 class RelacionExistente(HTTPException): ...
@@ -26,9 +29,9 @@ CONTROLLERS = {
     "control": ControlesController,
     "prueba": PruebasController,
     "observacion": ObservacionesController,
-    "normativa": None,
-    "aplicacion": None,
-    "organigrama": None,
+    "normativa": NormativasController,
+    "aplicacion": AplicacionesController,
+    "organigrama": OrganigramasController,
 }
 
 LINKS_VALIDOS = [
