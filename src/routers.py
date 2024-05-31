@@ -13,6 +13,7 @@ from entidades.observaciones.router import router as observaciones_router
 from entidades.pedidos.router import router as pedidos_router
 from entidades.archivos.router import router as archivos_router
 from entidades.normativas.router import router as normativas_router
+from entidades.aplicaciones.router import router as aplicaciones_router
 
 
 def set_routers(app):
@@ -146,6 +147,15 @@ def set_routers(app):
         router=normativas_router,
         prefix="/api/v1/normativas",
         tags=["Normativas"],
+        #####
+        # dependencies=[Depends(get_token_header)],
+        # responses={418: {"description": "I'm a teapot"}},
+    )
+
+    app.include_router(
+        router=aplicaciones_router,
+        prefix="/api/v1/aplicaciones",
+        tags=["Aplicaciones"],
         #####
         # dependencies=[Depends(get_token_header)],
         # responses={418: {"description": "I'm a teapot"}},
