@@ -113,14 +113,16 @@ class AplicacionesController(BaseController):
 
             # Agregación de coincidencias
             if buscar in descripcion:
+                solo_nombre = False
                 subtextos = extraer_medio(buscar, descripcion)
                 for sub in subtextos:
                     agregar(sub)
 
             if buscar in desarrollador:
-                subtextos = extraer_medio(buscar, desarrollador)
+                solo_nombre = False
+                subtextos = extraer_medio(buscar, desarrollador, longitud=68)
                 for sub in subtextos:
-                    agregar(sub)
+                    agregar(f"Desarrollador: {sub}")
 
             if solo_nombre and buscar in nombre:
                 agregar()
