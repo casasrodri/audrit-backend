@@ -7,6 +7,7 @@ class NormativaDB(BaseSchema):
     __tablename__ = "normativas"
 
     id = Column(Integer, primary_key=True, index=True)
+    nomenclatura = Column(String, index=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
     tipo = Column(String, index=True)

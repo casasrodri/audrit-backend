@@ -14,6 +14,7 @@ class NormativasController(BaseController):
     async def create(db: SqlDB, normativa: NormativaCreacion):
 
         db_normativa = NormativaDB(
+            nomenclatura=normativa.nomenclatura,
             nombre=normativa.nombre,
             descripcion=normativa.descripcion,
             tipo=normativa.tipo,
@@ -32,6 +33,7 @@ class NormativasController(BaseController):
     async def update(db: SqlDB, id: int, normativa: NormativaActualizacion):
         db_normativa = await NormativasController.get(db, id)
 
+        db_normativa.nomenclatura = normativa.nomenclatura
         db_normativa.nombre = normativa.nombre
         db_normativa.descripcion = normativa.descripcion
         db_normativa.tipo = normativa.tipo
@@ -68,6 +70,7 @@ class NormativasController(BaseController):
             db.query(NormativaDB)
             .filter(
                 NormativaDB.nombre.ilike(f"%{texto_buscado}%")
+                | NormativaDB.nombre.ilike(f"%{texto_buscado}%")
                 | NormativaDB.descripcion.ilike(f"%{texto_buscado}%")
             )
             .all()
@@ -95,7 +98,7 @@ class NormativasController(BaseController):
 
                 out.add(
                     ResultadoBusquedaGlobal(
-                        nombre=nor.nombre,
+                        nombre=f"{nor.nomenclatura} - {nor.nombre}",
                         texto=encontrado or descr,
                         tipo="normativa",
                         objeto={
@@ -106,7 +109,7 @@ class NormativasController(BaseController):
 
             # Variables
             buscar = texto.replace("\n", " ").lower()
-            nombre = nor.nombre.lower()
+            nombre = nor.nombre.lower() + " " + nor.nomenclatura.lower()
             descripcion = nor.descripcion.replace("\n", " ").lower()
             solo_nombre = True
 
