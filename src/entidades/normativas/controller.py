@@ -69,7 +69,7 @@ class NormativasController(BaseController):
         return (
             db.query(NormativaDB)
             .filter(
-                NormativaDB.nombre.ilike(f"%{texto_buscado}%")
+                NormativaDB.nomenclatura.ilike(f"%{texto_buscado}%")
                 | NormativaDB.nombre.ilike(f"%{texto_buscado}%")
                 | NormativaDB.descripcion.ilike(f"%{texto_buscado}%")
             )
