@@ -96,7 +96,13 @@ async def auth_middleware(request: Request, call_next):
 
     # AUTORIZACION
     # Se determina el endpoint de respuesta
-    endpoint_path, endpoint_methods = get_endpoint_response(request)
+    try:
+        endpoint_path, endpoint_methods = get_endpoint_response(request)
+    except TypeError as e:
+        return JSONResponse(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            content={"message": "Endpoint no implementado"},
+        )
     endpoint_requested = EndpointDB(method=method, path=endpoint_path)
 
     if endpoint_requested not in user.rol.endpoints:

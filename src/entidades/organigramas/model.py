@@ -8,7 +8,7 @@ class OrganigramaBase(BaseModel):
     nombre: str
     descripcion: str
     gerencia: str
-    personas: str
+    personas: str | None = None
     comentarios: str | None = None
 
 

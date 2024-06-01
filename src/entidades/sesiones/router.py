@@ -24,8 +24,8 @@ router = APIRouter()
 
 COOKIES_KWARGS = {
     "httponly": True,
-    "secure": True,
-    "samesite": "None",
+    # "secure": True,       # Solo para HTTPS
+    # "samesite": "None",   # Solo para HTTPS
     "expires": JWT_EXPIRE_MINUTES * 60,
 }
 
@@ -47,6 +47,7 @@ async def login(db: SqlDB, credenciales: UsuarioLogin, response: Response):
 
     # 4. Guardo el token de acceso en una cookie
     response.set_cookie(key="jwt", value=access_token, **COOKIES_KWARGS)
+    logger.who("Se envía cookie con token de acceso.")
 
     # 4. Devuelvo el resultado del login
     return {

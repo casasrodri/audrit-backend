@@ -7,9 +7,9 @@ from datetime import date
 class AplicacionBase(BaseModel):
     nombre: str
     descripcion: str
-    desarrollador: str
-    version: str
-    referentes: str
+    desarrollador: str | None = None
+    version: str | None = None
+    referentes: str | None = None
     comentarios: str | None = None
 
 
