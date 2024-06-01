@@ -1,6 +1,7 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
 from entidades.relevamientos.model import Relevamiento, RelevamientoId
+from datetime import datetime
 
 
 class DocumentoBase(BaseModel):
@@ -20,6 +21,7 @@ class DocumentoSoloContenido(DocumentoBase):
 
 class DocumentoDeRelevamiento(BaseModel):
     id: int
+    actualizacion: datetime
     relevamiento: RelevamientoId
 
 

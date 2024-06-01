@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from database import BaseSchema
 
@@ -8,6 +8,7 @@ class DocumentoDB(BaseSchema):
 
     id = Column(Integer, primary_key=True, index=True)
     contenido = Column(String, index=True)
+    actualizacion = Column(DateTime, index=True)
 
     relevamiento_id = Column(Integer, ForeignKey("relevamientos.id"))
     relevamiento = relationship(

@@ -8,6 +8,7 @@ from .model import (
 )
 from json import loads
 from entidades.links.controller import LinksController, EntidadLinkeable, CONTROLLERS
+from datetime import datetime
 
 
 async def buscar_objetos(
@@ -83,9 +84,11 @@ class DocumentosController(BaseController):
         # Se generan las asociaciones nuevamente
         await asociar(EntidadLinkeable.riesgo, db_documento, blocks, db)
         await asociar(EntidadLinkeable.control, db_documento, blocks, db)
-        # await asociar(EntidadLinkeable.normativa, db_documento, blocks, db)
-        # await asociar(EntidadLinkeable.organigrama, db_documento, blocks, db)
-        # await asociar(EntidadLinkeable.aplicacion, db_documento, blocks, db)
+        await asociar(EntidadLinkeable.normativa, db_documento, blocks, db)
+        await asociar(EntidadLinkeable.organigrama, db_documento, blocks, db)
+        await asociar(EntidadLinkeable.aplicacion, db_documento, blocks, db)
+
+        db_documento.actualizacion = datetime.now()
 
         db.commit()
         db.refresh(db_documento)
