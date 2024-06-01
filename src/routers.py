@@ -15,6 +15,7 @@ from entidades.archivos.router import router as archivos_router
 from entidades.normativas.router import router as normativas_router
 from entidades.aplicaciones.router import router as aplicaciones_router
 from entidades.organigramas.router import router as organigramas_router
+from entidades.asistente.router import router as asistente_router
 
 
 def set_routers(app):
@@ -118,4 +119,10 @@ def set_routers(app):
         router=organigramas_router,
         prefix="/api/v1/organigramas",
         tags=["Organigramas"],
+    )
+
+    app.include_router(
+        router=asistente_router,
+        prefix="/api/v1/asistente",
+        tags=["Asistente"],
     )
