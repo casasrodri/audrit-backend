@@ -24,6 +24,7 @@ class TokenException(HTTPException):
             status_code=status,
             detail=mensaje,
         )
+        logger.who(f"TokenException: {mensaje}")
 
 
 async def obtener_email(jwt: str) -> str:
@@ -31,22 +32,19 @@ async def obtener_email(jwt: str) -> str:
         return await leer_token(jwt)
 
     except JWTError as jwt_e:
-        logger.who(f"JWTError: {jwt_e}")
-        logger.who("No se pudo validar el token de acceso.")
+        # logger.who(f"JWTError: {jwt_e}")
         raise TokenException(
             mensaje="No se pudo validar el token de acceso.",
         )
 
     except AttributeError as attr_e:
-        logger.who(f"AttributeError: {attr_e}")
-        logger.who("No se encontró el token de acceso.")
+        # logger.who(f"AttributeError: {attr_e}")
         raise TokenException(
             mensaje="No se encontró el token de acceso.",
         )
 
     except Exception as e:
-        logger.who("{type(e)}: {e}")
-        logger.who("Error desconocido al procesar el JWT.")
+        # logger.who("{type(e)}: {e}")
 
         raise TokenException(
             mensaje="Error desconocido al procesar el JWT.",

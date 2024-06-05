@@ -9,3 +9,4 @@ run.bat
 uploads/
 matriz.xlsx
 ~$*.xlsx
+tmp/**
