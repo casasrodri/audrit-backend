@@ -13,7 +13,7 @@ from utils.helpers import extraer_medio
 def guardar_archivo(archivo: UploadFile):
     ya = datetime.now().strftime("%Y%m%d%H%M%S")
     hexa = hex(int(ya)).lstrip("0x")
-    path = f"uploads/{hexa}_{archivo.filename}"
+    path = f"files/uploads/{hexa}_{archivo.filename}"
 
     with open(path, "wb") as f:
         f.write(archivo.file.read())

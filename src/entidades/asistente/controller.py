@@ -106,7 +106,7 @@ def determinar_acciones(
 
 def guardar_documento(doc: DocumentoCargar):
     nombre = f"Doc{doc.id}_{doc.timestamp}.txt"
-    path = f"tmp/asistente/{nombre}"
+    path = f"files/tmp/asistente/{nombre}"
     parseado = json.loads(doc.obj.contenido.replace(r"\\n", ""))
 
     with open(path, mode="w", encoding="utf-8") as f:

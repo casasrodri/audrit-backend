@@ -6,7 +6,4 @@ __pycache__
 .vscode
 env.bat
 run.bat
-uploads/
-matriz.xlsx
-~$*.xlsx
-tmp/**
+files/**
