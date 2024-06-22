@@ -15,7 +15,7 @@ class EndpointDB(BaseSchema):
 
     id = Column(Integer, primary_key=True, index=True)
     method = Column(String, index=True)
-    path = Column(Integer, index=True)
+    path = Column(String, index=True)
 
     roles = relationship("RolUsuarioDB", secondary=permisos, back_populates="endpoints")
 

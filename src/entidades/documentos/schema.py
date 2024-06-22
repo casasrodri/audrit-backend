@@ -7,7 +7,7 @@ class DocumentoDB(BaseSchema):
     __tablename__ = "documentos"
 
     id = Column(Integer, primary_key=True, index=True)
-    contenido = Column(String, index=True)
+    contenido = Column(String)
     actualizacion = Column(DateTime, index=True)
 
     relevamiento_id = Column(Integer, ForeignKey("relevamientos.id"))
