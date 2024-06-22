@@ -1,6 +1,5 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 from .controller import ControlesController
-from entidades.links.controller import LinksController
 from .model import Control, ResultadoBusquedaControl
 from models import ResultadoBusquedaGlobal
 

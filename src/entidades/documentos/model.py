@@ -25,7 +25,7 @@ class DocumentoDeRelevamiento(BaseModel):
     relevamiento: RelevamientoId
 
 
-from entidades.riesgos.model import ResultadoBusquedaRiesgo
+# from entidades.riesgos.model import ResultadoBusquedaRiesgo
 
 
 class Documento(DocumentoBase, FromAttributes):

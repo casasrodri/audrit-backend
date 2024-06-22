@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from .controller import ObjetivosControlController
-from .model import ObjetivoControl, ObjetivoControlCreacion
+from .model import ObjetivoControl
 
 router = APIRouter()
 

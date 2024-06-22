@@ -1,7 +1,6 @@
 from __future__ import annotations
 from models import BaseModel, FromAttributes
 from entidades.links.model import ElementoLinkeado
-from datetime import date
 
 
 class OrganigramaBase(BaseModel):

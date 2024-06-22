@@ -26,11 +26,6 @@ class ControlCreacion(ControlBase):
 class ControlActualizacion(ControlCreacion): ...
 
 
-# if TYPE_CHECKING:
-from entidades.documentos.model import DocumentoDeRelevamiento
-from entidades.riesgos.model import RiesgoResumido
-
-
 class Control(ControlBase, FromAttributes):
     id: int
     revision: Revision

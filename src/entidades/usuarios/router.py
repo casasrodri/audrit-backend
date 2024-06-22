@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from .controller import UsuariosController
-from .model import UsuarioOut, UsuarioCreacion
+from .model import UsuarioOut
 from models import ResultadoBusquedaGlobal
 
 router = APIRouter()

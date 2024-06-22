@@ -1,9 +1,10 @@
 from fastapi import FastAPI
+import socket
 
 # from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.cors import CORSMiddleware
-from starlette.middleware.base import BaseHTTPMiddleware
-from fastapi import Request
+# from starlette.middleware.base import BaseHTTPMiddleware
+# from fastapi import Request
 
 ORIGINS = [
     "http://localhost:5173",  # Vue.js
@@ -16,7 +17,6 @@ ORIGINS = [
 
 # ORIGINS = ["*"]
 
-import socket
 
 nuevos_orig = [i[4][0] for i in socket.getaddrinfo(socket.gethostname(), None)]
 ORIGINS = [f"http://{ip}:5173" for ip in nuevos_orig if ":" not in ip]

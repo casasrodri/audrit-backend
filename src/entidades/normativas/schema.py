@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Date
-from sqlalchemy.orm import relationship
 from database import BaseSchema
 
 

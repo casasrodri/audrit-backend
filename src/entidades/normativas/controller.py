@@ -12,7 +12,6 @@ class NormativasController(BaseController):
         return db.query(NormativaDB).all()
 
     async def create(db: SqlDB, normativa: NormativaCreacion):
-
         db_normativa = NormativaDB(
             nomenclatura=normativa.nomenclatura,
             nombre=normativa.nombre,
@@ -111,7 +110,6 @@ class NormativasController(BaseController):
             buscar = texto.replace("\n", " ").lower()
             nombre = nor.nombre.lower() + " " + nor.nomenclatura.lower()
             descripcion = nor.descripcion.replace("\n", " ").lower()
-            solo_nombre = True
 
             # Agregación de coincidencias
             if buscar in descripcion:

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Request, Depends
+from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import Response
 from utils.jwt import crear_token, JWT_EXPIRE_MINUTES
 from utils.logger import logger

@@ -22,11 +22,6 @@ class RiesgoCreacion(RiesgoBase):
 class RiesgoActualizacion(RiesgoCreacion): ...
 
 
-# if TYPE_CHECKING:
-from entidades.documentos.model import DocumentoDeRelevamiento
-from entidades.controles.model import ControlResumido
-
-
 class Riesgo(RiesgoBase, FromAttributes):
     id: int
     revision: Revision

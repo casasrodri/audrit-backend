@@ -20,7 +20,7 @@ async def buscar_objetos(
     for id in ids:
         try:
             out.append(await controlador.get(db, id))
-        except:
+        except:  # noqa: E722
             ...
 
     return out

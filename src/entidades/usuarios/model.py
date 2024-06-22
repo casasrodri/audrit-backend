@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from enum import Enum
 from pydantic import model_validator
 from models import FromAttributes
-from middlewares.auth.model import Endpoint
+# from middlewares.auth.model import Endpoint
 
 
 class RolUsuario(str, Enum):

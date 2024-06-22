@@ -63,7 +63,7 @@ class RiesgosController(BaseController):
         )
 
         # Se eliminan los links de objetivos de control
-        links = await LinksController.delete_all_objetivos_control(db, id)
+        await LinksController.delete_all_objetivos_control(db, id)
 
         # Se crean nuevamente todas las asociaciones
         for oc in riesgo.objetivos_control:

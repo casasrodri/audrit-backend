@@ -1,11 +1,10 @@
-from datetime import datetime, timedelta, UTC
-
-from jose import JWTError, jwt
+import os
+from datetime import UTC, datetime, timedelta
 
 from dotenv import load_dotenv
+from jose import JWTError, jwt
 
-load_dotenv()
-import os
+load_dotenv(override=True)
 
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")

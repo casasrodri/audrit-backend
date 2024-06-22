@@ -31,19 +31,19 @@ async def obtener_email(jwt: str) -> str:
     try:
         return await leer_token(jwt)
 
-    except JWTError as jwt_e:
+    except JWTError:
         # logger.who(f"JWTError: {jwt_e}")
         raise TokenException(
             mensaje="No se pudo validar el token de acceso.",
         )
 
-    except AttributeError as attr_e:
+    except AttributeError:
         # logger.who(f"AttributeError: {attr_e}")
         raise TokenException(
             mensaje="No se encontró el token de acceso.",
         )
 
-    except Exception as e:
+    except Exception:
         # logger.who("{type(e)}: {e}")
 
         raise TokenException(
@@ -67,7 +67,7 @@ async def auth_middleware(request: Request, call_next):
     # Variables de contexto
     method = request.scope.get("method")
     path = request.scope.get("path")
-    query = request.scope.get("query_string").decode()
+    # query = request.scope.get("query_string").decode()
     jwt = request.cookies.get("jwt")
     # user: UsuarioDB = request.scope.get("state").get("user")
     db = next(get_db())
@@ -96,7 +96,7 @@ async def auth_middleware(request: Request, call_next):
     # Se determina el endpoint de respuesta
     try:
         endpoint_path, endpoint_methods = get_endpoint_response(request)
-    except TypeError as e:
+    except TypeError:
         return JSONResponse(
             status_code=status.HTTP_501_NOT_IMPLEMENTED,
             content={"message": "Endpoint no implementado"},

@@ -2,6 +2,8 @@ from fastapi import WebSocket, WebSocketDisconnect
 from openai import OpenAI
 from database import SqlDB
 from entidades.documentos.schema import DocumentoDB
+import json
+from collections import namedtuple
 
 # Variables globales
 client = OpenAI()
@@ -41,9 +43,9 @@ async def consultar_asistente(websocket: WebSocket):
             prompt = await websocket.receive_text()
             print("Prompt:", prompt)
             # await websocket.send_text(prompt)
-            mensaje = enviar_mensaje(conversacion, prompt)
+            enviar_mensaje(conversacion, prompt)
             await stream_respuesta(conversacion, websocket)
-            await websocket.send_text(f"ACK:FIN")
+            await websocket.send_text("ACK:FIN")
 
     except WebSocketDisconnect:
         ...
@@ -52,8 +54,7 @@ async def consultar_asistente(websocket: WebSocket):
 # Manejo de archivos
 store = client.beta.vector_stores.retrieve("vs_pl0l2GU3S8XpNqp8veSxnmXi")
 FORMATO_TIMESTAMP = "%Y%m%d%H%M%S"
-import json
-from collections import namedtuple
+
 
 DocumentoStore = namedtuple("DocumentoStore", ["id", "filename", "idDoc", "timestamp"])
 DocumentoCargar = namedtuple("DocumentoCargar", ["id", "timestamp", "obj"])
