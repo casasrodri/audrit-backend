@@ -35,6 +35,13 @@ router.add_api_route(
 )
 
 router.add_api_route(
+    path="/{id}",
+    endpoint=AuditoriasController.update,
+    methods=["PUT"],
+    response_model=Auditoria,
+)
+
+router.add_api_route(
     path="/buscarGlobal/{texto:path}",
     endpoint=AuditoriasController.buscar_global,
     methods=["GET"],

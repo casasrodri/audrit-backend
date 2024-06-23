@@ -1,15 +1,16 @@
 from controllers import BaseController
 from fastapi import HTTPException, status
 from database import SqlDB
-from .model import AuditoriaCreacion
+from entidades.auditorias.model import AuditoriaCreacion
 from models import ResultadoBusquedaGlobal
+from sqlalchemy import desc
 
 from .schema import AuditoriaDB
 
 
 class AuditoriasController(BaseController):
     def get_all(db: SqlDB):
-        return db.query(AuditoriaDB).all()
+        return db.query(AuditoriaDB).order_by(desc(AuditoriaDB.id)).all()
 
     def get(db: SqlDB, sigla: str = None, id: int = None):
         tabla = db.query(AuditoriaDB)
@@ -34,15 +35,40 @@ class AuditoriasController(BaseController):
         return AuditoriasController.get(db, id=id)
 
     def create(db: SqlDB, auditoria: AuditoriaCreacion):
-        db_aud = AuditoriaDB(**auditoria.__dict__)
+        db_aud = AuditoriaDB(
+            sigla=auditoria.sigla,
+            nombre=auditoria.nombre,
+            tipo=auditoria.tipo,
+            estado=auditoria.estado,
+            periolodo=auditoria.periodo,
+        )
 
-        if AuditoriasController.get(db, sigla=auditoria.sigla):
+        try:
+            existente = AuditoriasController.get(db, sigla=auditoria.sigla)
+        except HTTPException:
+            existente = None
+
+        if existente:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f"Ya existe una auditoría con la sigla '{auditoria.sigla}'",
             )
 
         db.add(db_aud)
+        db.commit()
+        db.refresh(db_aud)
+
+        return db_aud
+
+    def update(db: SqlDB, id: int, auditoria: AuditoriaCreacion):
+        db_aud = AuditoriasController.get(db, id=id)
+
+        db_aud.sigla = auditoria.sigla
+        db_aud.nombre = auditoria.nombre
+        db_aud.tipo = auditoria.tipo
+        db_aud.estado = auditoria.estado
+        db_aud.periodo = auditoria.periodo
+
         db.commit()
         db.refresh(db_aud)
 
