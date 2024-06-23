@@ -1,16 +1,17 @@
 from fastapi import HTTPException
 from controllers import BaseController
 from database import SqlDB
-from .schema import RelevamientoDB
-from .model import (
+from entidades.relevamientos.schema import RelevamientoDB
+from entidades.relevamientos.model import (
     RelevamientoCreacion,
     RelevamientoNodo,
     RelevamientoNodoData,
     RelevamientoActualizacion,
 )
-from models import ResultadoBusquedaGlobal
-from utils.helpers import extraer_medio, editorjs_to_text
 from entidades.documentos.schema import DocumentoDB
+from utils.helpers import extraer_medio, editorjs_to_text
+from entidades.revisiones.controller import RevisionesController
+from models import ResultadoBusquedaGlobal
 
 
 class RelevamientosController(BaseController):
@@ -24,10 +25,17 @@ class RelevamientosController(BaseController):
             .all()
         )
 
-    async def get_nodos_by_revision(db: SqlDB, revision_id: int):
+    async def get_nodos_by_revision(
+        db: SqlDB, revision_id: int, solo_agrupadores: bool = False
+    ):
         relevamientos = await RelevamientosController.get_all_by_revision(
             db, revision_id
         )
+
+        if solo_agrupadores:
+            relevamientos = [
+                relev for relev in relevamientos if relev.tipo != "documento"
+            ]
 
         def crear_nodo(relevamiento):
             data = RelevamientoNodoData(
@@ -58,17 +66,29 @@ class RelevamientosController(BaseController):
         out = [nodo for nodo in nodos.values() if nodo.data.padre is None]
         return out
 
-    async def create(db: SqlDB, relevamiento: RelevamientoCreacion):
+    async def create(db: SqlDB, revision_id: int, relevamiento: RelevamientoCreacion):
+        db_revision = await RevisionesController.get(db, revision_id)
+
         db_relevamiento = RelevamientoDB(
+            tipo=relevamiento.tipo,
+            revision_id=db_revision.id,
             sigla=relevamiento.sigla,
             nombre=relevamiento.nombre,
-            descripcion=relevamiento.descripcion,
             padre_id=relevamiento.padre_id,
         )
 
         db.add(db_relevamiento)
         db.commit()
         db.refresh(db_relevamiento)
+
+        # Creación del documento asociado
+        from entidades.documentos.controller import DocumentosController
+        from entidades.documentos.model import DocumentoCreacion
+
+        documento = DocumentoCreacion(
+            relevamiento_id=db_relevamiento.id, contenido="{}"
+        )
+        await DocumentosController.create(db, documento)
 
         return db_relevamiento
 

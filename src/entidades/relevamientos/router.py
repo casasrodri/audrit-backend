@@ -31,7 +31,7 @@ router.add_api_route(
 
 # TODO
 router.add_api_route(
-    path="",
+    path="/revision/{revision_id}",
     endpoint=RelevamientosController.create,
     methods=["POST"],
     response_model=Relevamiento,
