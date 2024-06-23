@@ -82,13 +82,14 @@ class RelevamientosController(BaseController):
         db.refresh(db_relevamiento)
 
         # Creación del documento asociado
-        from entidades.documentos.controller import DocumentosController
-        from entidades.documentos.model import DocumentoCreacion
+        if db_relevamiento.tipo == "documento":
+            from entidades.documentos.controller import DocumentosController
+            from entidades.documentos.model import DocumentoCreacion
 
-        documento = DocumentoCreacion(
-            relevamiento_id=db_relevamiento.id, contenido="{}"
-        )
-        await DocumentosController.create(db, documento)
+            documento = DocumentoCreacion(
+                relevamiento_id=db_relevamiento.id, contenido="{}"
+            )
+            await DocumentosController.create(db, documento)
 
         return db_relevamiento
 
