@@ -10,6 +10,7 @@ from .model import (
 )
 from models import ResultadoBusquedaGlobal
 from utils.helpers import extraer_medio
+from entidades.auditorias.controller import AuditoriasController
 
 
 class RevisionesController(BaseController):
@@ -54,12 +55,16 @@ class RevisionesController(BaseController):
         out = [nodo for nodo in nodos.values() if nodo.data.padre is None]
         return out
 
-    async def create(db: SqlDB, revision: RevisionCreacion):
+    async def create(db: SqlDB, auditoria_id: int, revision: RevisionCreacion):
+        db_audit = AuditoriasController.get(db, id=auditoria_id)
+
         db_revision = RevisionDB(
+            auditoria_id=db_audit.id,
             sigla=revision.sigla,
             nombre=revision.nombre,
             descripcion=revision.descripcion,
             padre_id=revision.padre_id,
+            estado="pendiente",
         )
 
         db.add(db_revision)

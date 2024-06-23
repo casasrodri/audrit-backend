@@ -34,7 +34,7 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    path="",
+    path="/auditoria/{auditoria_id}",
     endpoint=RevisionesController.create,
     methods=["POST"],
     response_model=Revision,
