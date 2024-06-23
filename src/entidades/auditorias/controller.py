@@ -40,7 +40,7 @@ class AuditoriasController(BaseController):
             nombre=auditoria.nombre,
             tipo=auditoria.tipo,
             estado=auditoria.estado,
-            periolodo=auditoria.periodo,
+            periodo=auditoria.periodo,
         )
 
         try:
