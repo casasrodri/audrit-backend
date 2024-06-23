@@ -6,7 +6,7 @@ from database import BaseSchema
 class ArchivoDB(BaseSchema):
     __tablename__ = "archivos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String, index=True)
     bytes = Column(Integer, index=True)
     tipo = Column(String, index=True)

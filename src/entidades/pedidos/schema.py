@@ -7,7 +7,7 @@ from datetime import datetime
 class ComentariosPedidosDB(BaseSchema):
     __tablename__ = "comentarios_pedidos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     momento = Column(DateTime, index=True, default=datetime.now)
 
     pedido_id = Column(Integer(), ForeignKey("pedidos.id"))
@@ -22,7 +22,7 @@ class ComentariosPedidosDB(BaseSchema):
 class PedidoDB(BaseSchema):
     __tablename__ = "pedidos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
     estado = Column(String, index=True)

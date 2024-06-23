@@ -8,7 +8,7 @@ from middlewares.auth.schema import permisos
 class RolUsuarioDB(BaseSchema):
     __tablename__ = "roles_usuarios"
 
-    id = mapped_column(Integer, primary_key=True, index=True)
+    id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
     menues = Column(String, index=True)

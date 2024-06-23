@@ -6,7 +6,7 @@ from database import BaseSchema
 class DocumentoDB(BaseSchema):
     __tablename__ = "documentos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     contenido = Column(String)
     actualizacion = Column(DateTime, index=True)
 

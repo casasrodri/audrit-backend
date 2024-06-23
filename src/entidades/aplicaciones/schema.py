@@ -5,7 +5,7 @@ from database import BaseSchema
 class AplicacionDB(BaseSchema):
     __tablename__ = "aplicaciones"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
     desarrollador = Column(String, index=True)

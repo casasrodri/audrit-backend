@@ -8,7 +8,7 @@ from datetime import datetime
 class ObservacionDB(BaseSchema):
     __tablename__ = "observaciones"
 
-    id = mapped_column(Integer, primary_key=True, index=True)
+    id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
     riesgo = Column(String, index=True)

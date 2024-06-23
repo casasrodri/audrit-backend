@@ -5,7 +5,7 @@ from database import BaseSchema
 class NormativaDB(BaseSchema):
     __tablename__ = "normativas"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nomenclatura = Column(String, index=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)

@@ -6,7 +6,7 @@ from database import BaseSchema
 class RelevamientoDB(BaseSchema):
     __tablename__ = "relevamientos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     tipo = Column(String, index=True)
 
     revision_id = Column(Integer, ForeignKey("revisiones.id"))

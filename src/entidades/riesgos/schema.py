@@ -13,7 +13,7 @@ from sqlalchemy.orm import mapped_column
 class RiesgoDB(BaseSchema):
     __tablename__ = "riesgos"
 
-    id = mapped_column(Integer, primary_key=True, index=True)
+    id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
     nivel = Column(String, index=True)

@@ -5,7 +5,7 @@ from database import BaseSchema
 class AuditoriaDB(BaseSchema):
     __tablename__ = "auditorias"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     sigla = Column(String, index=True, unique=True)
     nombre = Column(String, index=True)
     # TODO: Relacionar con una tabla "AuditoriasTipos"

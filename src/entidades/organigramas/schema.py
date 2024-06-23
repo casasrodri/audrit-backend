@@ -5,7 +5,7 @@ from database import BaseSchema
 class OrganigramaDB(BaseSchema):
     __tablename__ = "organigramas"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String, index=True)
     descripcion = Column(String, index=True)
     gerencia = Column(String, index=True)
