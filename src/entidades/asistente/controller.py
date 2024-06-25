@@ -1,13 +1,18 @@
-from fastapi import WebSocket, WebSocketDisconnect
-from openai import OpenAI
+import json
+from datetime import datetime
+from pathlib import Path
+from typing import Any
+
 from database import SqlDB
 from entidades.documentos.schema import DocumentoDB
-import json
-from collections import namedtuple
+from fastapi import WebSocket, WebSocketDisconnect
+from openai import OpenAI
+from pydantic import BaseModel
 
 # Variables globales
 client = OpenAI()
 auditor = client.beta.assistants.retrieve("asst_VU2eGpeR7rbfJ8e7rOxqeIJ9")
+store = client.beta.vector_stores.retrieve("vs_zsMbXAk9aLZ5btuwqzGc7aVU")
 
 
 def crear_conversacion():
@@ -52,108 +57,197 @@ async def consultar_asistente(websocket: WebSocket):
 
 
 # Manejo de archivos
-store = client.beta.vector_stores.retrieve("vs_pl0l2GU3S8XpNqp8veSxnmXi")
 FORMATO_TIMESTAMP = "%Y%m%d%H%M%S"
+CARPETA = Path("files/tmp/asistente")
 
 
-DocumentoStore = namedtuple("DocumentoStore", ["id", "filename", "idDoc", "timestamp"])
-DocumentoCargar = namedtuple("DocumentoCargar", ["id", "timestamp", "obj"])
+class DocumentoRelevamiento(BaseModel):
+    id: int
+    fecha: datetime
+    ubicacion: str
+    accion: str = None
+    archivo: Any
+
+    def __repr__(self):
+        return f"<DocRel {self.id} - {self.fecha} - {self.ubicacion} - {self.accion}>"
+
+    def __hash__(self):
+        return hash(f"{self.id}{self.fecha}{self.ubicacion}")
+
+    def __lt__(self, other):
+        return self.fecha < other.fecha
+
+    def __gt__(self, other):
+        return self.fecha > other.fecha
+
+    def __eq__(self, other):
+        return self.fecha == other.fecha
+
+    def __ne__(self, other):
+        return self.fecha != other.fecha
+
+    def __le__(self, other):
+        return self.fecha <= other.fecha
+
+    def __ge__(self, other):
+        return self.fecha >= other.fecha
 
 
-def listar_archivos_store() -> set[DocumentoStore]:
+def obtener_documentos_locales(db: SqlDB) -> list[DocumentoRelevamiento]:
+    archivos_db = db.query(DocumentoDB).all()
+    return [
+        DocumentoRelevamiento(
+            archivo=archivo,
+            id=archivo.id,
+            fecha=archivo.actualizacion.replace(microsecond=0),
+            ubicacion="db",
+        )
+        for archivo in archivos_db
+    ]
+
+
+def obtener_documentos_online() -> list[DocumentoRelevamiento]:
     archivos_store = client.beta.vector_stores.files.list(vector_store_id=store.id)
-    out = set()
-    for archivo_store in archivos_store.data:
-        archivo = client.files.retrieve(archivo_store.id)
-        out.add(
-            DocumentoStore(
-                archivo.id,
-                archivo.filename,
-                int(archivo.filename.split("_")[0].replace("Doc", "")),
-                int(archivo.filename.split("_")[1].replace(".txt", "")),
+
+    files = []
+    for pag in archivos_store.iter_pages():
+        files.extend(pag.data)
+
+    documentos_openai = [client.files.retrieve(file.id) for file in files]
+
+    docs_online = []
+    for archivo in documentos_openai:
+        doc, fecha = archivo.filename.replace(".txt", "").split("_")
+        doc = int(doc.replace("Doc", " "))
+        fecha = datetime.strptime(fecha, FORMATO_TIMESTAMP)
+        docs_online.append(
+            DocumentoRelevamiento(
+                archivo=archivo, id=doc, fecha=fecha, ubicacion="openai"
             )
         )
 
-    return out
+    return docs_online
 
 
-def buscar_doc_store(id: int, documentos_store: set[DocumentoStore]):
-    for doc_st in documentos_store:
-        if doc_st.idDoc == id:
-            return doc_st
+def determinar_acciones_por_documento(
+    archivos_online: list[DocumentoRelevamiento],
+    archivos_locales: list[DocumentoRelevamiento],
+) -> set[DocumentoRelevamiento]:
+    set_online = set(archivos_online)
+    set_locales = set(archivos_locales)
 
+    todos = set_online | set_locales
 
-def determinar_acciones(
-    documentos_db: list[DocumentoDB], documentos_store: set[DocumentoStore]
-):
-    eliminar, subir = set(), set()
+    for donline in set_online:
+        # Se comprueba si es el último disponible
+        filtro = set(filter(lambda x: x.id == donline.id, todos))
+        ultimo = max(filtro)
 
-    for doc_db in documentos_db:
-        doc_car = DocumentoCargar(
-            doc_db.id, int(doc_db.actualizacion.strftime(FORMATO_TIMESTAMP)), doc_db
-        )
-
-        asociado_en_store = buscar_doc_store(doc_car.id, documentos_store)
-
-        if not asociado_en_store:
-            subir.add(doc_car)
+        if ultimo == donline:
+            donline.accion = "mantener"
         else:
-            if doc_car.timestamp > asociado_en_store.timestamp:
-                subir.add(doc_car)
-                eliminar.add(asociado_en_store)
+            donline.accion = "eliminar"
 
-    return eliminar, subir
+    for dlocal in set_locales:
+        # Se comprueba si es el último disponible
+        filtro_id = set(filter(lambda x: x.id == dlocal.id, todos))
+        ultimo = max(filtro_id)
+
+        # Verificar si se mantiene el online
+        hay_mantener = any(filter(lambda x: x.accion == "mantener", filtro_id))
+
+        if hay_mantener:
+            dlocal.accion = "nada"
+        else:
+            if ultimo == dlocal:
+                dlocal.accion = "subir"
+            else:
+                dlocal.accion = "nada"
+
+    return todos
 
 
-def guardar_documento(doc: DocumentoCargar):
-    nombre = f"Doc{doc.id}_{doc.timestamp}.txt"
-    path = f"files/tmp/asistente/{nombre}"
-    parseado = json.loads(doc.obj.contenido.replace(r"\\n", ""))
+def contar_cantidad_pendientes(db: SqlDB) -> int:
+    # Determinación de documentos
+    documentos_locales = obtener_documentos_locales(db)
+    documentos_online = obtener_documentos_online()
+
+    # Determinar acciones por documento
+    acciones = determinar_acciones_por_documento(documentos_online, documentos_locales)
+
+    # Determinar cantidad de archivos pendientes
+    pendientes = set(filter(lambda x: x.accion == "subir", acciones))
+
+    return len(pendientes)
+
+
+def generar_archivo_local(doc: DocumentoRelevamiento) -> str:
+    fecha = doc.fecha.strftime(FORMATO_TIMESTAMP)
+    nombre = f"Doc{doc.id}_{fecha}.txt"
+    path = CARPETA / nombre
+    parseado = json.loads(doc.archivo.contenido.replace(r"\\n", ""))
 
     with open(path, mode="w", encoding="utf-8") as f:
-        f.write(f"titulo:::{doc.obj.relevamiento.nombre}\n")
-        f.write(f"timestap:::{doc.timestamp}\n")
+        f.write(f"titulo:::{doc.archivo.relevamiento.nombre}\n")
+        f.write(f"timestamp:::{doc.fecha}\n")
+
         for block in parseado["blocks"]:
             tipo, data = block["type"], block["data"]
 
             if tipo == "mermaid" or not data:
                 continue
+
             f.write(f"|type:{tipo}|{data}")
 
     return path
 
 
-def eliminar_doc_store(iterable):
-    for archivo in iterable:
-        client.files.delete(archivo.id)
-        print(f"Eliminado de OpenAI: {archivo.id}")
+def cargar_archivos_online(archivos: set[DocumentoRelevamiento]):
+    subir = filter(lambda x: x.accion == "subir", archivos)
 
+    archivos_subir = {doc: generar_archivo_local(doc) for doc in subir}
 
-def cargar_doc_store(iterable):
-    file_paths = []
-    for doc in iterable:
-        path = guardar_documento(doc)
-        file_paths.append(path)
+    if not archivos_subir:
+        return None
 
-    file_streams = [open(path, "rb") for path in file_paths]
+    print(f"Cargando {len(archivos_subir)} archivos a OpenAI:")
+    for doc in archivos_subir:
+        print(doc.archivo)
+
+    file_streams = [open(path, "rb") for path in archivos_subir.values()]
 
     file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
         vector_store_id=store.id, files=file_streams
     )
 
     # You can print the status and the file counts of the batch to see the result of this operation.
-    print(file_batch.status)
-    print(file_batch.file_counts)
+    print("Status:", file_batch.status)
+    print("Conteo:", file_batch.file_counts)
+
+    # Cerrado de archivos
+    for file in file_streams:
+        file.close()
+
+    # Eliminar archivos locales
+    for path in archivos_subir.values():
+        Path(path).unlink()
 
 
-async def actualizar_contenido(db: SqlDB):
-    documentos_db = db.query(DocumentoDB).all()
-    documentos_store = listar_archivos_store()
+def eliminar_archivos_antiguos(archivos: set[DocumentoRelevamiento]):
+    eliminar = filter(lambda x: x.accion == "eliminar", archivos)
 
-    eliminar, subir = determinar_acciones(documentos_db, documentos_store)
-    print(f"Se eliminarán {len(eliminar)} archivos del store de OpenAI.")
-    print(f"Se agregarán {len(subir)} archivos al store de OpenAI.")
-    eliminar_doc_store(eliminar)
-    cargar_doc_store(subir)
-    # TODO eliminar archivos, ver porque se siguen subiendo siempre 17
-    return None
+    for doc in eliminar:
+        client.files.delete(doc.archivo.id)
+        print(f"Eliminado de OpenAI: {doc.archivo.id}")
+
+
+def sincronizar(db: SqlDB):
+    # Determinación de documentos
+    documentos_locales = obtener_documentos_locales(db)
+    documentos_online = obtener_documentos_online()
+
+    # Determinar acciones por documento
+    acciones = determinar_acciones_por_documento(documentos_online, documentos_locales)
+
+    cargar_archivos_online(acciones)
+    eliminar_archivos_antiguos(acciones)

@@ -1,5 +1,9 @@
 from fastapi import APIRouter
-from .controller import consultar_asistente, actualizar_contenido
+from .controller import (
+    consultar_asistente,
+    contar_cantidad_pendientes,
+    sincronizar,
+)
 
 router = APIRouter()
 
@@ -9,6 +13,11 @@ router.add_api_websocket_route(
 )
 
 router.add_api_route(
-    path="/actualizarContenido",
-    endpoint=actualizar_contenido,
+    path="/contarCantidadPendientes",
+    endpoint=contar_cantidad_pendientes,
+)
+
+router.add_api_route(
+    path="/sincronizar",
+    endpoint=sincronizar,
 )
