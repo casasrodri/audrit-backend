@@ -147,4 +147,4 @@ class RevisionesController(BaseController):
             elif texto in nombre:
                 agregar()
 
-        return out[:10]
+        return list(out)[:10]

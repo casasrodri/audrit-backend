@@ -97,4 +97,4 @@ class AuditoriasController(BaseController):
                 )
             )
 
-        return out[:10]
+        return list(out)[:10]
