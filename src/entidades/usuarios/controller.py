@@ -124,4 +124,4 @@ class UsuariosController(BaseController):
                 )
             )
 
-        return out
+        return out[:10]

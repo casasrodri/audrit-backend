@@ -7,9 +7,7 @@ from models import ResultadoBusquedaGlobal
 
 
 class ArchivosController(BaseController):
-
     async def descargar(db: SqlDB, nombre: str):
-
         archivo = (
             db.query(ArchivoDB).filter(ArchivoDB.path.ilike(f"%/{nombre}")).first()
         )
@@ -42,4 +40,4 @@ class ArchivosController(BaseController):
                 )
             )
 
-        return out
+        return out[:10]

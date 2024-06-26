@@ -12,7 +12,6 @@ class OrganigramasController(BaseController):
         return db.query(OrganigramaDB).all()
 
     async def create(db: SqlDB, organigrama: OrganigramaCreacion):
-
         db_organigrama = OrganigramaDB(
             nombre=organigrama.nombre,
             descripcion=organigrama.descripcion,
@@ -126,4 +125,4 @@ class OrganigramasController(BaseController):
             if solo_nombre and buscar in nombre:
                 agregar()
 
-        return out
+        return out[:10]

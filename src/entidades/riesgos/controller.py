@@ -161,4 +161,4 @@ class RiesgosController(BaseController):
             else:
                 agregar()
 
-        return out
+        return out[:10]

@@ -120,4 +120,4 @@ class NormativasController(BaseController):
                 if buscar in nombre:
                     agregar()
 
-        return out
+        return out[:10]

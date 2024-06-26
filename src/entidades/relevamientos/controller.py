@@ -224,4 +224,4 @@ class RelevamientosController(BaseController):
                 agregar()
 
         # print(out)
-        return out
+        return out[:10]

@@ -169,4 +169,4 @@ class ObservacionesController(BaseController):
             if solo_nombre and buscar in nombre:
                 agregar()
 
-        return out
+        return out[:10]

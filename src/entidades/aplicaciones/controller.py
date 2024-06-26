@@ -12,7 +12,6 @@ class AplicacionesController(BaseController):
         return db.query(AplicacionDB).all()
 
     async def create(db: SqlDB, aplicacion: AplicacionCreacion):
-
         db_aplicacion = AplicacionDB(
             nombre=aplicacion.nombre,
             descripcion=aplicacion.descripcion,
@@ -127,4 +126,4 @@ class AplicacionesController(BaseController):
             if solo_nombre and buscar in nombre:
                 agregar()
 
-        return out
+        return out[:10]

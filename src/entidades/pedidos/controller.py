@@ -47,7 +47,6 @@ class PedidosController(BaseController):
         return pedido
 
     async def create(db: SqlDB, pedido: PedidoCreacion):  # OK
-
         user_creador = await UsuariosController.get_by_id(db, pedido.creador_id)
         user_destinatario = await UsuariosController.get_by_id(
             db, pedido.destinatario_id
@@ -166,4 +165,4 @@ class PedidosController(BaseController):
                     agregar(sub)
             elif texto in nombre:
                 agregar()
-        return out
+        return out[:10]
