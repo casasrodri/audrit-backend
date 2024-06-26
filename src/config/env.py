@@ -11,7 +11,7 @@ class Environment:
 class JWT:
     SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
     ALGORITHM = os.environ.get("JWT_ALGORITHM")
-    EXPIRE_MINUTES = os.environ.get("JWT_EXPIRE_MINUTES")
+    EXPIRE_MINUTES = int(os.environ.get("JWT_EXPIRE_MINUTES"))
 
 
 class DataBase:
@@ -20,5 +20,5 @@ class DataBase:
 
 
 class Logger:
-    LEVEL = os.environ.get("LOG_LEVEL")
-    FILE_LINE = os.environ.get("LOG_FILE_LINE")
+    LEVEL = str(os.environ.get("LOG_LEVEL", "INFO")).upper()
+    FILE_LINE = os.environ.get("LOG_FILE_LINE", "false").lower() == "true"

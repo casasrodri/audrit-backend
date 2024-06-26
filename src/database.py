@@ -1,12 +1,11 @@
-from sqlalchemy import create_engine, Engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from fastapi import Depends
-from sqlalchemy.orm import Session
 from typing import Annotated
-from config.env import Environment, DataBase
-from utils.logger import logger
 
+from config.env import DataBase, Environment
+from fastapi import Depends
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session, sessionmaker
+from utils.logger import logger
 
 engine: Engine = None
 motor: str = None

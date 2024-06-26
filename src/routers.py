@@ -1,21 +1,21 @@
-from entidades.usuarios.router import router as usuarios_router
-from entidades.sesiones.router import router as sesiones_router
-from entidades.auditorias.router import router as auditorias_router
-from entidades.revisiones.router import router as revisiones_router
-from entidades.relevamientos.router import router as relevamientos_router
-from entidades.documentos.router import router as documentos_router
-from entidades.objetivos_control.router import router as objetivos_control_router
-from entidades.riesgos.router import router as riesgos_router
-from entidades.controles.router import router as controles_router
-from entidades.pruebas.router import router as pruebas_router
-from entidades.links.router import router as relaciones_router
-from entidades.observaciones.router import router as observaciones_router
-from entidades.pedidos.router import router as pedidos_router
-from entidades.archivos.router import router as archivos_router
-from entidades.normativas.router import router as normativas_router
 from entidades.aplicaciones.router import router as aplicaciones_router
-from entidades.organigramas.router import router as organigramas_router
+from entidades.archivos.router import router as archivos_router
 from entidades.asistente.router import router as asistente_router
+from entidades.auditorias.router import router as auditorias_router
+from entidades.controles.router import router as controles_router
+from entidades.documentos.router import router as documentos_router
+from entidades.links.router import router as relaciones_router
+from entidades.normativas.router import router as normativas_router
+from entidades.objetivos_control.router import router as objetivos_control_router
+from entidades.observaciones.router import router as observaciones_router
+from entidades.organigramas.router import router as organigramas_router
+from entidades.pedidos.router import router as pedidos_router
+from entidades.pruebas.router import router as pruebas_router
+from entidades.relevamientos.router import router as relevamientos_router
+from entidades.revisiones.router import router as revisiones_router
+from entidades.riesgos.router import router as riesgos_router
+from entidades.sesiones.router import router as sesiones_router
+from entidades.usuarios.router import router as usuarios_router
 
 
 def set_routers(app):

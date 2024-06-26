@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException, Request, Depends
-from fastapi.responses import Response
-from utils.jwt import crear_token, JWT_EXPIRE_MINUTES
-from utils.logger import logger
-from entidades.usuarios.controller import UsuariosController
-from entidades.usuarios.model import UsuarioLogin, UsuarioOut
-from database import SqlDB
-from entidades.usuarios.controller import CredencialesException
 from typing import Annotated
+
+from config.env import JWT
+from database import SqlDB
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import Response
+from utils.jwt import crear_token
+from utils.logger import logger
+
+from entidades.usuarios.controller import CredencialesException, UsuariosController
+from entidades.usuarios.model import UsuarioLogin, UsuarioOut
 from entidades.usuarios.schema import UsuarioDB
 
 
@@ -26,7 +28,7 @@ COOKIES_KWARGS = {
     "httponly": True,
     # "secure": True,       # Solo para HTTPS
     # "samesite": "None",   # Solo para HTTPS
-    "expires": JWT_EXPIRE_MINUTES * 60,
+    "expires": JWT.EXPIRE_MINUTES * 60,
 }
 
 

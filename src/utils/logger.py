@@ -1,16 +1,10 @@
-import os
 import sys
 from loguru import logger
-from dotenv import load_dotenv
-
-load_dotenv(override=True)
-
-LOG_LEVEL = str(os.environ.get("LOG_LEVEL", "INFO")).upper()
-LOG_FILE_LINE = os.environ.get("LOG_FILE_LINE", "false").lower() == "true"
+from config.env import Logger
 
 format_time = "<cyan>{time:HH:mm:ss}</cyan>"
 format_level = "<level>{level}</level>"
-format_file_line = " <i><le>{file}:{line}</le></i>" if LOG_FILE_LINE else ""
+format_file_line = " <i><le>{file}:{line}</le></i>" if Logger.FILE_LINE else ""
 format_message = "{message}"
 logger.remove(0)
 
@@ -18,7 +12,7 @@ logger.add(
     sys.stdout,
     format=f"{format_time} {format_level}{format_file_line} <b>→</b> {format_message}",
     colorize=True,
-    level=LOG_LEVEL,
+    level=Logger.LEVEL,
 )
 
 logger.level("WHO?", no=5, color="<green>")
