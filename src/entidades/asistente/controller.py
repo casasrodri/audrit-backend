@@ -1,4 +1,5 @@
 import json
+import pickle
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -58,7 +59,7 @@ async def consultar_asistente(websocket: WebSocket):
 
 # Manejo de archivos
 FORMATO_TIMESTAMP = "%Y%m%d%H%M%S"
-CARPETA = Path("files/tmp/asistente")
+CARPETA = Path("files/asistente")
 
 
 class DocumentoRelevamiento(BaseModel):
@@ -106,7 +107,30 @@ def obtener_documentos_locales(db: SqlDB) -> list[DocumentoRelevamiento]:
     ]
 
 
-def obtener_documentos_online() -> list[DocumentoRelevamiento]:
+class CacheDocumentosOnline:
+    archivo = CARPETA / "cache.pkl"
+
+    @staticmethod
+    def crear():
+        documentos = consultar_documentos_online()
+        with open(CacheDocumentosOnline.archivo, mode="wb") as f:
+            pickle.dump(documentos, f)
+
+    @staticmethod
+    def cargar() -> list[DocumentoRelevamiento]:
+        with open(CacheDocumentosOnline.archivo, mode="rb") as f:
+            return pickle.load(f)
+
+    @staticmethod
+    def existe() -> bool:
+        return CacheDocumentosOnline.archivo.exists()
+
+    @staticmethod
+    def eliminar():
+        CacheDocumentosOnline.archivo.unlink()
+
+
+def consultar_documentos_online() -> list[DocumentoRelevamiento]:
     archivos_store = client.beta.vector_stores.files.list(vector_store_id=store.id)
 
     files = []
@@ -127,6 +151,13 @@ def obtener_documentos_online() -> list[DocumentoRelevamiento]:
         )
 
     return docs_online
+
+
+def obtener_documentos_online() -> list[DocumentoRelevamiento]:
+    if not CacheDocumentosOnline.existe():
+        CacheDocumentosOnline.crear()
+
+    return CacheDocumentosOnline.cargar()
 
 
 def determinar_acciones_por_documento(
@@ -231,6 +262,12 @@ def cargar_archivos_online(archivos: set[DocumentoRelevamiento]):
     # Eliminar archivos locales
     for path in archivos_subir.values():
         Path(path).unlink()
+
+    # Eliminar cache
+    CacheDocumentosOnline.eliminar()
+
+    # Generar nuevo caché
+    CacheDocumentosOnline.crear()
 
 
 def eliminar_archivos_antiguos(archivos: set[DocumentoRelevamiento]):
