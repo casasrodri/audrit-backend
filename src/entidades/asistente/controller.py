@@ -7,7 +7,7 @@ from typing import Any
 from database import SqlDB
 from entidades.documentos.schema import DocumentoDB
 from fastapi import WebSocket, WebSocketDisconnect
-from openai import OpenAI
+from openai import NotFoundError, OpenAI
 from pydantic import BaseModel
 
 # Variables globales
@@ -274,8 +274,11 @@ def eliminar_archivos_antiguos(archivos: set[DocumentoRelevamiento]):
     eliminar = filter(lambda x: x.accion == "eliminar", archivos)
 
     for doc in eliminar:
-        client.files.delete(doc.archivo.id)
-        print(f"Eliminado de OpenAI: {doc.archivo.id}")
+        try:
+            client.files.delete(doc.archivo.id)
+            print(f"Eliminado de OpenAI: {doc.archivo.id}")
+        except NotFoundError:
+            print(f"No encontrado en OpenAI: {doc.archivo.id}")
 
 
 def sincronizar(db: SqlDB):
