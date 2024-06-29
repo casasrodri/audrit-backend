@@ -20,15 +20,15 @@ from entidades.usuarios.router import router as usuarios_router
 
 def set_routers(app):
     app.include_router(
-        router=usuarios_router,
-        prefix="/api/v1/usuarios",
-        tags=["Usuarios"],
-    )
-
-    app.include_router(
         router=sesiones_router,
         prefix="/api/v1/sesiones",
         tags=["Sesiones"],
+    )
+
+    app.include_router(
+        router=usuarios_router,
+        prefix="/api/v1/usuarios",
+        tags=["Usuarios"],
     )
 
     app.include_router(
