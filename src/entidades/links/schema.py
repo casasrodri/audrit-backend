@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String
 from database import BaseSchema
+from sqlalchemy import Column, Integer, String
 
 
 class LinkDB(BaseSchema):

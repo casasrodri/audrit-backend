@@ -1,8 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
 from database import BaseSchema
-from sqlalchemy.orm import mapped_column
 from middlewares.auth.schema import permisos
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import mapped_column, relationship
 
 
 class RolUsuarioDB(BaseSchema):

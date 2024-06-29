@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
 from database import BaseSchema
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import mapped_column, relationship
 
 # from relaciones.tablas import (
 #     riesgos_objetivos_control,

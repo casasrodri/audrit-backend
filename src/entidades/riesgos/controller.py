@@ -1,11 +1,13 @@
-from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .model import RiesgoCreacion, RiesgoActualizacion
-from .schema import RiesgoDB
-from entidades.revisiones.controller import RevisionesController
+from fastapi import HTTPException, status
 from models import ResultadoBusquedaGlobal
 from utils.helpers import extraer_medio
+
+from entidades.revisiones.controller import RevisionesController
+
+from .model import RiesgoActualizacion, RiesgoCreacion
+from .schema import RiesgoDB
 
 
 class RiesgosController(BaseController):
@@ -35,8 +37,8 @@ class RiesgosController(BaseController):
         db.refresh(db_riesgo)
 
         from entidades.links.controller import (
-            LinksController,
             EntidadLinkeable,
+            LinksController,
         )
 
         for oc in riesgo.objetivos_control:
@@ -58,8 +60,8 @@ class RiesgosController(BaseController):
         db_riesgo.nivel = riesgo.nivel
 
         from entidades.links.controller import (
-            LinksController,
             EntidadLinkeable,
+            LinksController,
         )
 
         # Se eliminan los links de objetivos de control
@@ -90,7 +92,7 @@ class RiesgosController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             riesgo.links = await LinksController.get(db, EntidadLinkeable.riesgo, id)
 

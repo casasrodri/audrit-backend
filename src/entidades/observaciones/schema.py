@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
-from sqlalchemy.orm import relationship
-from database import BaseSchema
-from sqlalchemy.orm import mapped_column
 from datetime import datetime
+
+from database import BaseSchema
+from sqlalchemy import Column, Date, ForeignKey, Integer, String
+from sqlalchemy.orm import mapped_column, relationship
 
 
 class ObservacionDB(BaseSchema):

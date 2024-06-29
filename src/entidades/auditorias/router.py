@@ -1,7 +1,8 @@
 from fastapi import APIRouter
+from models import ResultadoBusquedaGlobal
+
 from .controller import AuditoriasController
 from .model import Auditoria
-from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 

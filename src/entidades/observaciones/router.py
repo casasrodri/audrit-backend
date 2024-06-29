@@ -1,7 +1,8 @@
 from fastapi import APIRouter
+from models import ResultadoBusquedaGlobal
+
 from .controller import ObservacionesController
 from .model import Observacion, ResultadoBusquedaObservacion
-from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 

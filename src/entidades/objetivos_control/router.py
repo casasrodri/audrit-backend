@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from .controller import ObjetivosControlController
 from .model import ObjetivoControl
 

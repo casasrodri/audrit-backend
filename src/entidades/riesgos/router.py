@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from .controller import RiesgosController
-from .model import Riesgo, ResultadoBusquedaRiesgo
 from models import ResultadoBusquedaGlobal
+
+from .controller import RiesgosController
+from .model import ResultadoBusquedaRiesgo, Riesgo
 
 router = APIRouter()
 

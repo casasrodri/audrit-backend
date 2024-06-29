@@ -1,17 +1,18 @@
-from fastapi import HTTPException
 from controllers import BaseController
 from database import SqlDB
-from entidades.relevamientos.schema import RelevamientoDB
+from fastapi import HTTPException
+from models import ResultadoBusquedaGlobal
+from utils.helpers import editorjs_to_text, extraer_medio
+
+from entidades.documentos.schema import DocumentoDB
 from entidades.relevamientos.model import (
+    RelevamientoActualizacion,
     RelevamientoCreacion,
     RelevamientoNodo,
     RelevamientoNodoData,
-    RelevamientoActualizacion,
 )
-from entidades.documentos.schema import DocumentoDB
-from utils.helpers import extraer_medio, editorjs_to_text
+from entidades.relevamientos.schema import RelevamientoDB
 from entidades.revisiones.controller import RevisionesController
-from models import ResultadoBusquedaGlobal
 
 
 class RelevamientosController(BaseController):
@@ -114,7 +115,7 @@ class RelevamientosController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             relevamiento.links = await LinksController.get(
                 db, EntidadLinkeable.relevamiento, id

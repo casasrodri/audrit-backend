@@ -1,7 +1,8 @@
 from fastapi import APIRouter, status
+from models import ResultadoBusquedaGlobal
+
 from .controller import NormativasController
 from .model import Normativa, ResultadoBusquedaNormativa
-from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 

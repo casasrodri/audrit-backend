@@ -1,11 +1,12 @@
-from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .model import PruebaCreacion, PruebaActualizacion
-from .schema import PruebaDB
 from entidades.revisiones.controller import RevisionesController
+from fastapi import HTTPException, status
 from models import ResultadoBusquedaGlobal
 from utils.helpers import extraer_medio
+
+from .model import PruebaActualizacion, PruebaCreacion
+from .schema import PruebaDB
 
 
 class PruebasController(BaseController):
@@ -57,7 +58,7 @@ class PruebasController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             prueba.links = await LinksController.get(db, EntidadLinkeable.prueba, id)
 

@@ -1,5 +1,6 @@
-from fastapi import Request
 import json
+
+from fastapi import Request
 
 
 async def console_log(request: Request, call_next):

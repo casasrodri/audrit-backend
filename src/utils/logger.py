@@ -1,6 +1,7 @@
 import sys
-from loguru import logger
+
 from config.env import Logger
+from loguru import logger
 
 format_time = "<cyan>{time:HH:mm:ss}</cyan>"
 format_level = "<level>{level}</level>"

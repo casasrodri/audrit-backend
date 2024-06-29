@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from .controller import PedidosController
-from .model import Pedido, ComentarioPedido, ArchivoResumido
 from models import ResultadoBusquedaGlobal
+
+from .controller import PedidosController
+from .model import ArchivoResumido, ComentarioPedido, Pedido
 
 router = APIRouter()
 

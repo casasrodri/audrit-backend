@@ -1,7 +1,8 @@
-from pydantic import BaseModel
 from enum import Enum
-from pydantic import model_validator
+
 from models import FromAttributes
+from pydantic import BaseModel, model_validator
+
 # from middlewares.auth.model import Endpoint
 
 

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, status
+from models import ResultadoBusquedaGlobal
+
 from .controller import AplicacionesController
 from .model import Aplicacion, ResultadoBusquedaAplicacion
-from models import ResultadoBusquedaGlobal
 
 router = APIRouter()
 

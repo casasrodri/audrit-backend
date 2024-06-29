@@ -1,13 +1,13 @@
-from fastapi import Request, status, HTTPException
+from database import get_db
+from entidades.usuarios.controller import UsuariosController
+from entidades.usuarios.schema import UsuarioDB
+from fastapi import HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from jose.exceptions import JWTError
+from middlewares.auth.schema import EndpointDB
 from utils.jwt import leer_token
 from utils.logger import logger
-from database import get_db
-from entidades.usuarios.controller import UsuariosController
-from middlewares.auth.schema import EndpointDB
-from entidades.usuarios.schema import UsuarioDB
 
 PATH_PUBLICOS = [
     "/docs",

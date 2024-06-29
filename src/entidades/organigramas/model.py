@@ -1,6 +1,7 @@
 from __future__ import annotations
-from models import BaseModel, FromAttributes
+
 from entidades.links.model import ElementoLinkeado
+from models import BaseModel, FromAttributes
 
 
 class OrganigramaBase(BaseModel):

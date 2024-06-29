@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status
+
 from .controller import LinksController
 from .model import ElementoLinkeado
 

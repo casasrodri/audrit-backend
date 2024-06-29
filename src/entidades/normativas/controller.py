@@ -1,10 +1,11 @@
-from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .model import NormativaCreacion, NormativaActualizacion
-from .schema import NormativaDB
+from fastapi import HTTPException, status
 from models import ResultadoBusquedaGlobal
 from utils.helpers import extraer_medio
+
+from .model import NormativaActualizacion, NormativaCreacion
+from .schema import NormativaDB
 
 
 class NormativasController(BaseController):
@@ -56,7 +57,7 @@ class NormativasController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             normativa.links = await LinksController.get(
                 db, EntidadLinkeable.normativa, id

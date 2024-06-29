@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime
-from sqlalchemy.orm import relationship
-from database import BaseSchema
 from datetime import datetime
+
+from database import BaseSchema
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class ComentariosPedidosDB(BaseSchema):

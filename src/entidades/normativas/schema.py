@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Date
 from database import BaseSchema
+from sqlalchemy import Column, Date, Integer, String
 
 
 class NormativaDB(BaseSchema):

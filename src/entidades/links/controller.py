@@ -1,22 +1,21 @@
-from fastapi import HTTPException, status
-from sqlalchemy.exc import IntegrityError
 from enum import Enum
 
 from controllers import BaseController
 from database import SqlDB
+from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
 
+from entidades.aplicaciones.controller import AplicacionesController
+from entidades.controles.controller import ControlesController
 from entidades.links.model import EntidadLinkeable
 from entidades.links.schema import LinkDB
-
-from entidades.controles.controller import ControlesController
-from entidades.riesgos.controller import RiesgosController
+from entidades.normativas.controller import NormativasController
 from entidades.objetivos_control.controller import ObjetivosControlController
+from entidades.observaciones.controller import ObservacionesController
+from entidades.organigramas.controller import OrganigramasController
 from entidades.pruebas.controller import PruebasController
 from entidades.relevamientos.controller import RelevamientosController
-from entidades.observaciones.controller import ObservacionesController
-from entidades.aplicaciones.controller import AplicacionesController
-from entidades.normativas.controller import NormativasController
-from entidades.organigramas.controller import OrganigramasController
+from entidades.riesgos.controller import RiesgosController
 
 
 class RelacionExistente(HTTPException): ...

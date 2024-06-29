@@ -1,8 +1,11 @@
 from __future__ import annotations
-from models import BaseModel, FromAttributes
-from entidades.revisiones.model import Revision
-from entidades.links.model import ElementoLinkeado
+
 from datetime import date, datetime
+
+from models import BaseModel, FromAttributes
+
+from entidades.links.model import ElementoLinkeado
+from entidades.revisiones.model import Revision
 
 
 class ObservacionBase(BaseModel):

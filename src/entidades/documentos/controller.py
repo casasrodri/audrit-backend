@@ -1,14 +1,17 @@
-from fastapi import HTTPException, status
+from datetime import datetime
+from json import loads
+
 from controllers import BaseController
 from database import SqlDB
-from .schema import DocumentoDB
+from fastapi import HTTPException, status
+
+from entidades.links.controller import CONTROLLERS, EntidadLinkeable, LinksController
+
 from .model import (
-    DocumentoCreacion,
     DocumentoActualizacion,
+    DocumentoCreacion,
 )
-from json import loads
-from entidades.links.controller import LinksController, EntidadLinkeable, CONTROLLERS
-from datetime import datetime
+from .schema import DocumentoDB
 
 
 async def buscar_objetos(
@@ -104,7 +107,7 @@ class DocumentosController(BaseController):
             )
 
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             documento.links = await LinksController.get(
                 db, EntidadLinkeable.relevamiento, documento.relevamiento_id

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from models import BaseModel, FromAttributes
+
 from entidades.auditorias.model import Auditoria
 
 

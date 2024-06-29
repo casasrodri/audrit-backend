@@ -1,10 +1,11 @@
-from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .model import OrganigramaCreacion, OrganigramaActualizacion
-from .schema import OrganigramaDB
+from fastapi import HTTPException, status
 from models import ResultadoBusquedaGlobal
 from utils.helpers import extraer_medio
+
+from .model import OrganigramaActualizacion, OrganigramaCreacion
+from .schema import OrganigramaDB
 
 
 class OrganigramasController(BaseController):
@@ -51,7 +52,7 @@ class OrganigramasController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             organigrama.links = await LinksController.get(
                 db, EntidadLinkeable.organigrama, id

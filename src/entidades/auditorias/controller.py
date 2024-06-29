@@ -1,9 +1,10 @@
 from controllers import BaseController
-from fastapi import HTTPException, status
 from database import SqlDB
-from entidades.auditorias.model import AuditoriaCreacion
+from fastapi import HTTPException, status
 from models import ResultadoBusquedaGlobal
 from sqlalchemy import desc
+
+from entidades.auditorias.model import AuditoriaCreacion
 
 from .schema import AuditoriaDB
 

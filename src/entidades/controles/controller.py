@@ -1,11 +1,12 @@
-from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .model import ControlCreacion, ControlActualizacion
-from .schema import ControlDB
 from entidades.revisiones.controller import RevisionesController
+from fastapi import HTTPException, status
 from models import ResultadoBusquedaGlobal
 from utils.helpers import extraer_medio
+
+from .model import ControlActualizacion, ControlCreacion
+from .schema import ControlDB
 
 
 class ControlesController(BaseController):
@@ -59,7 +60,7 @@ class ControlesController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             control.links = await LinksController.get(db, EntidadLinkeable.control, id)
 

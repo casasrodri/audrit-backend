@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from middlewares.auth.controller import auth_middleware
 from middlewares.console_logger import console_log
 from middlewares.cors import cors_midd

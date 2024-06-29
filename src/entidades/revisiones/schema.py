@@ -1,6 +1,6 @@
+from database import BaseSchema
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from database import BaseSchema
 
 
 class RevisionDB(BaseSchema):

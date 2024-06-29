@@ -1,6 +1,7 @@
-from fastapi import HTTPException
 from controllers import BaseController
 from database import SqlDB
+from fastapi import HTTPException
+
 from .model import ObjetivoControlCreacion
 from .schema import ObjetivoControlDB
 
@@ -31,7 +32,7 @@ class ObjetivosControlController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             objetivo.links = await LinksController.get(
                 db, EntidadLinkeable.objetivo_control, id

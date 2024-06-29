@@ -1,6 +1,7 @@
 from fastapi import APIRouter
-from .controller import ArchivosController
 from models import ResultadoBusquedaGlobal
+
+from .controller import ArchivosController
 
 router = APIRouter()
 

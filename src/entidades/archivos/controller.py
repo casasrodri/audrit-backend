@@ -1,9 +1,10 @@
-from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .schema import ArchivoDB
+from fastapi import HTTPException, status
 from fastapi.responses import FileResponse
 from models import ResultadoBusquedaGlobal
+
+from .schema import ArchivoDB
 
 
 class ArchivosController(BaseController):

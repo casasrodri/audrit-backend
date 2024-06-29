@@ -1,8 +1,10 @@
 from __future__ import annotations
-from enum import Enum
-from models import BaseModel, FromAttributes
-from entidades.links.model import ElementoLinkeado
+
 from datetime import date
+from enum import Enum
+
+from entidades.links.model import ElementoLinkeado
+from models import BaseModel, FromAttributes
 from pydantic import model_validator
 
 

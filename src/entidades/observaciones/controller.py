@@ -1,11 +1,13 @@
-from fastapi import HTTPException, status
 from controllers import BaseController
 from database import SqlDB
-from .model import ObservacionCreacion, ObservacionActualizacion
-from .schema import ObservacionDB
-from entidades.revisiones.controller import RevisionesController
+from fastapi import HTTPException, status
 from models import ResultadoBusquedaGlobal
 from utils.helpers import extraer_medio
+
+from entidades.revisiones.controller import RevisionesController
+
+from .model import ObservacionActualizacion, ObservacionCreacion
+from .schema import ObservacionDB
 
 
 class ObservacionesController(BaseController):
@@ -73,7 +75,7 @@ class ObservacionesController(BaseController):
 
         # Obtención de links
         if links:
-            from entidades.links.controller import LinksController, EntidadLinkeable
+            from entidades.links.controller import EntidadLinkeable, LinksController
 
             observacion.links = await LinksController.get(
                 db, EntidadLinkeable.observacion, id
