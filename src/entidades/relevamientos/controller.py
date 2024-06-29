@@ -13,6 +13,7 @@ from entidades.relevamientos.model import (
 )
 from entidades.relevamientos.schema import RelevamientoDB
 from entidades.revisiones.controller import RevisionesController
+from json import dumps
 
 
 class RelevamientosController(BaseController):
@@ -88,7 +89,7 @@ class RelevamientosController(BaseController):
             from entidades.documentos.model import DocumentoCreacion
 
             documento = DocumentoCreacion(
-                relevamiento_id=db_relevamiento.id, contenido="{}"
+                relevamiento_id=db_relevamiento.id, contenido=dumps({"blocks": []})
             )
             await DocumentosController.create(db, documento)
 

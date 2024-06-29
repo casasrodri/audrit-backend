@@ -63,6 +63,7 @@ class DocumentosController(BaseController):
         db_documento = DocumentoDB(
             relevamiento_id=documento.relevamiento_id,
             contenido=documento.contenido,
+            actualizacion=datetime.now(),
         )
 
         db.add(db_documento)
