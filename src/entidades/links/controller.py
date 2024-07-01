@@ -57,7 +57,7 @@ LINKS_VALIDOS = [
     (EntidadLinkeable.observacion, EntidadLinkeable.prueba),
     (EntidadLinkeable.observacion, EntidadLinkeable.normativa),
     (EntidadLinkeable.observacion, EntidadLinkeable.aplicacion),
-    (EntidadLinkeable.observacion, EntidadLinkeable.aplicacion),
+    (EntidadLinkeable.observacion, EntidadLinkeable.organigrama),
     # Ejemplo prohibido: Relevamiento | Prueba
 ]
 
